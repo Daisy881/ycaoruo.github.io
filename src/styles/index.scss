@@ -1,0 +1,41 @@
+@import './frame/copyright.scss';
+@import './frame/element-ui.scss';
+@import './frame/shoppingCar.scss';
+@import './frame/login.scss';
+@import './frame/orderManagementEdit.scss';
+@import './frame/personalCenter.scss';
+@import './frame/classify.scss';
+@import './frame/dialogDetails.scss';
+@import './frame/clissifyEdit.scss';
+@import './frame/pay.scss';
+@import './frame/homeTop.scss';
+
+* {
+	margin: 0;
+	padding: 0;
+}
+.out-container {
+	position: absolute;
+	width: 1440px;
+	height: 900px;
+}
+
+a {
+	text-decoration: none;
+  color: #66B0FF;
+  font-size: 14px;
+
+	&:hover {
+		cursor: pointer;
+		text-decoration: underline;
+	  color: #66B0FF;
+	}
+}
+.catalogue-main {
+	border: 1px solid #E0E0E0;
+	padding-left: 50px;
+}
+.titleName {
+  width: 83%;
+	padding: 20px 0 !important;
+}

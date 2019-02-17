@@ -1,0 +1,42 @@
+.border-main {
+	margin-bottom: 241px;
+	box-shadow: #666 0px 0px 10px;
+}
+.payTime {
+	font-size: 14px;
+	color: #5B5B5B;
+}
+.merchant-order {
+	font-size: 12px;
+	color: #6C6C6C;
+}
+.payWay {
+	border: 1px solid #dcdfe6;
+	border-radius: 3px;
+	margin-bottom: 5px;
+	padding:0 0 5px 10px;
+	&:hover {
+		cursor: default;
+	}
+}
+.chooseImg {
+	width: 25px;
+  height: 25px;
+  position: relative;
+  left: 320px;
+  top: 5px;
+}
+.chooseImgs {
+	left: 335px;
+}
+.payButton {
+	background-color: #66B0FF;
+	border-radius: 2px;
+	text-align: center;
+	padding: 10px;
+	margin-top: 80px;
+
+	&:hover {
+		cursor: pointer;
+	}
+}

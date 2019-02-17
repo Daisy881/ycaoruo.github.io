@@ -1,0 +1,42 @@
+.shoppingCar-container {
+	width: 417px;
+	float: right; 
+	position: absolute;
+	top: 40px;
+	right: 0;
+	z-index: 10;
+	background-color: white;
+	border: 1px grey solid;
+}
+.product-nums {
+  height: 95px;
+	padding: 15px;
+	border-bottom: 1px grey solid;
+}
+.calculate-total {
+	width: 53px;
+	height: 32px;
+	padding: 25px;
+	position: relative; 
+	right: -315px;
+	top: -26px;
+	background-color: #00DB00;
+	cursor: pointer;
+}
+.total-nums {
+	color:red; 
+	position: relative; 
+	top: 25px; 
+	left: 10px;
+	font-size: 19px;
+}
+.product-img {
+	width: 50px; 
+	height: 50px;
+}
+.shoppingCar {
+		cursor: pointer;
+		font-size: 15px;
+		color: black;
+		margin-left: 10px;
+}

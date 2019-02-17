@@ -1,0 +1,110 @@
+.login-picture {
+	position: relative;
+	top: 100px;
+	margin: 16px 100px;
+}
+.login-container {
+	height: 600px;
+}
+.login-main {
+	width: 400px;
+	position: relative;
+	right: -890px;
+	top: -215px;
+}
+.loginTip {
+	color: #f56c6c;
+	height: 20px;
+  font-size: 12px;
+  position: relative;
+  left: 80px;
+}
+.loginTip2 {
+	top: -85px;
+}
+.loginTip3 {
+	top: -260px;
+}
+.verificationCodeClass {
+	width: 47px;
+	height: 17px;
+	border: 1px solid #66B0FF;
+	border-radius: 2px;
+	margin-left: 15px;
+	padding: 10px;
+}
+.forgetPassword {
+  width: 100px;
+	position: relative;
+	right: -300px;
+	color: #66B0FF;
+  font-size: 14px;
+
+  &:hover {
+	  cursor: pointer;
+	  text-decoration: underline
+  }
+}
+.loginButton {
+	width: 340px;
+	height: 30px;
+	background-color: #66B0FF;
+	text-align: center;
+	padding-top: 10px;
+	margin-left: 20px;
+	color: white;
+	margin-top: 15px;
+
+	&:hover {
+		background-color: #46A3FF;
+		cursor: pointer;
+	}
+}
+.loginButton-register {
+	margin-left: 0px;
+}
+.freeRegistration {
+	color: #66B0FF;
+  font-size: 14px;
+
+  &:hover {
+	  cursor: pointer;
+	  text-decoration: underline;
+  }
+}
+.disagree {
+	width: 70px;
+	height: 30px;
+	position: absolute;
+	padding-top: 7px;
+	text-align: center;
+	border-radius: 5px;
+	border: 1px solid #ADADAD;
+
+	&:hover {
+	cursor: pointer;
+	}
+}
+.getCode {
+	width: 140px;
+	font-size: 6px; 
+	background-color: #C4E1E1; 
+	border: 1px solid #C4DBD0;
+	text-align: center; 
+	margin: -15px auto 10px 195px; 
+
+	&:hover {
+		cursor: pointer;
+		background-color: #C4DFD0;
+	}
+}
+.protocol {
+	margin: 20px auto; 
+	text-align: center;
+	color: #66B0FF;
+
+  &:hover {
+	  cursor: pointer;
+	  text-decoration: underline
+  }
+}

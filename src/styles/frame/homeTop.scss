@@ -1,0 +1,68 @@
+.address {
+	position: relative;
+	left: -820px;
+}
+.address:hover {
+	cursor: pointer;
+}
+.top-box {
+	position: relative;
+	right: -75%;
+	top: 5px;
+	width: 260px;
+}
+.logoClass {
+	width: 50px;
+	height: 50px;
+	position: relative;
+	top: 30px;
+	left: 150px;
+}
+.search {
+	width: 600px;
+	padding: 20px;
+  position: relative;
+  left: 26%;
+  top: -15px;
+  margin-bottom: 10px;
+}
+.searchBox {
+	margin-top: -18px;
+	margin-bottom: 38px;
+}
+.serchButton {
+	width: 50px;
+	padding: 8px;
+	padding-left: 20px;
+	border-radius: 5px;
+	background-color: #66B0FF;
+  position: absolute;
+  right: -60px;
+  top: 21px;
+
+  &:hover {
+  	cursor: pointer;
+  }
+}
+.addressDetials {
+	max-width: 470px;
+	border: 1px solid #c0c4cc;
+	position: absolute;
+	left: -815px;
+	margin-top: 10px;
+	z-index: 10;
+	background-color: white;
+	float: left;
+}
+.addList {
+	list-style: none;
+	padding: 3px;
+	margin: 5px 10px;
+	float: left;
+	box-shadow: #c0c4cc 0px 0px 10px;
+
+	&:hover {
+		cursor: pointer;
+		color: #66B0FF;
+	}
+}
