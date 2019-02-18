@@ -1,39 +1,41 @@
 <template>
 	<div class="header-container">
-		<div class="top-box">
-			<div class="address" @click="chooseAddress">
-				<img src="@/icons/img/地理位置.png" style="width: 20px; height: 20px; position: relative; top: 4px;" />{{this.province}}
-				<span style="font-size: 12px;">[{{this.city}}&nbsp;{{this.district}}]</span>
+		<!-- <div @click="getShadow"> -->
+			<div class="top-box">
+				<div class="address" @click="chooseAddress">
+					<img src="@/icons/img/地理位置.png" style="width: 20px; height: 20px; position: relative; top: 4px;" />{{this.province}}
+					<span style="font-size: 12px;">[{{this.city}}&nbsp;{{this.district}}]</span>
+				</div>
+				<div class="addressDetials" v-if="addressVisible">
+					<ul>
+	          <li class="addList" v-for="(item, index) in info" @click="getProvinceId(item.name, index)" v-show="showProvince">{{item.name}}</li>
+	          <li class="addList" v-for="(item, index) in showCityList" @click="getCityId(item.name, index)" v-show="showCity">{{item.name}}</li>
+	          <li class="addList" v-for="(item, index) in showDistrictList" @click="getDistrictId(item.name)" v-show="showDistrict">{{item.name}}</li>
+	        </ul>
+				</div>
+				<div style="position: relative; top: -20px">
+					<el-button type="text" size="mini" @click="doUser" v-if="state === 1">{{this.user}}</el-button>
+					<el-button type="text" size="mini" @click="doLogin" v-else>登录</el-button>
+					<el-button type="text" size="mini" @click="doExit" v-if="state === 1" style="color: black;">退出</el-button>
+					<el-button type="text" size="mini" @click="doRegister" v-else>注册</el-button>
+					<span class="shoppingCar" @click="handleShoppingCar">我的购物车
+						<span class="el-icon-caret-top" v-if="asideVisible"></span>
+						<span class="el-icon-caret-bottom" v-if="!asideVisible"></span>
+					</span>
+				</div>
 			</div>
-			<div class="addressDetials" v-if="addressVisible">
-				<ul>
-          <li class="addList" v-for="(item, index) in info" @click="getProvinceId(item.name, index)" v-show="showProvince">{{item.name}}</li>
-          <li class="addList" v-for="(item, index) in showCityList" @click="getCityId(item.name, index)" v-show="showCity">{{item.name}}</li>
-          <li class="addList" v-for="(item, index) in showDistrictList" @click="getDistrictId(item.name)" v-show="showDistrict">{{item.name}}</li>
-        </ul>
+			<div class="searchBox">
+				<div class="logoClass">
+					<img src="../../icons/img/图标.png" style="width: 210px; height: 100px;">
+				</div>
+				<div class="search">
+					<el-input placeholder="请输入搜索内容"></el-input>
+					<div class="serchButton">搜索</div>
+				</div>
 			</div>
-			<div style="position: relative; top: -20px">
-				<el-button type="text" size="mini" @click="doUser" v-if="state === 1">{{this.user}}</el-button>
-				<el-button type="text" size="mini" @click="doLogin" v-else>登录</el-button>
-				<el-button type="text" size="mini" @click="doExit" v-if="state === 1" style="color: black;">退出</el-button>
-				<el-button type="text" size="mini" @click="doRegister" v-else>注册</el-button>
-				<span class="shoppingCar" @click="handleShoppingCar">我的购物车
-					<span class="el-icon-caret-top" v-if="asideVisible"></span>
-					<span class="el-icon-caret-bottom" v-if="!asideVisible"></span>
-				</span>
-			</div>
-		</div>
-		<div class="searchBox">
-			<div class="logoClass">
-				<img src="../../icons/img/图标.png" style="width: 210px; height: 100px;">
-			</div>
-			<div class="search">
-				<el-input placeholder="请输入搜索内容"></el-input>
-				<div class="serchButton">搜索</div>
-			</div>
-		</div>
+		<!-- </div> -->
 		<!--购物车组件-->
-		<shopping-car v-if="asideVisible"></shopping-car>
+		<div @blur="getShadow"><shopping-car v-if="asideVisible"></shopping-car></div>
 	</div>
 </template>
 
@@ -161,6 +163,10 @@
 			}
 		},
 		methods: {
+			getShadow(){
+				console.log(11)
+				this.asideVisible = false
+			},
 			doUser() {
 				this.$router.push({
 					name: 'personalCenter',

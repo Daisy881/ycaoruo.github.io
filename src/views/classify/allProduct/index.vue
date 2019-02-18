@@ -4,7 +4,7 @@
 		<div class="allPhoto">
 			<ul v-for="(item, index) in this.listQuery" :value="item.value" :key="index">
 				<li>
-					<img :src="item.url" style="width: 300px; height: 350px;" @click="doProduct"/>
+					<img :src="item.url" style="width: 300px; height: 350px;" @click="doProduct(item)"/>
 					<div class="productName">{{item.goodsName}}
 						<span class="price">￥{{item.price}}</span>
 						<span class="doorPrice">￥{{item.originalPrice}}</span>
@@ -14,7 +14,7 @@
 			</ul>
 		</div>
 		<el-dialog title="商品详情" :visible.sync="dialogVisible" :close-on-click-modal="false" width="60%">
-			<product @closeHandler="closeDialog"></product>
+			<product @closeHandler="closeDialog" :goodsObj="goodsObj"></product>
 		</el-dialog>
 		<copyright></copyright>
 	</div>
@@ -22,7 +22,7 @@
 
 <script>
 	import { addGoods } from '@/api/frame/shoppingCar'
-	import { getList } from '@/api/frame/goods'
+	import { getGoodsList } from '@/api/frame/goods'
 	import homeTop from '@/views/homeTop/index'
 	import copyright from '@/views/copyright/index'
 	import product from '@/views/classify/product/index'
@@ -30,6 +30,7 @@
 		name: 'allProduct',
 		data() {
 			return {
+				goodsObj: null,
 				listQuery: [],
 				imgUrl: [{
 					url: require('@/icons/img/商品详情/1.jpg'),
@@ -76,12 +77,13 @@
 		methods: {
 			// 初始化
 			getList() {
-				getList()
+				getGoodsList()
 				 .then(response => {
 				 		this.listQuery = response.data
 				 })
 			},
-			doProduct() {
+			doProduct(params) {
+				this.goodsObj = params
 				this.dialogVisible = true
 			},
 			closeDialog() {

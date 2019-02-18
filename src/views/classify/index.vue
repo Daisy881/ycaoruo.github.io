@@ -9,7 +9,7 @@
 			<div class="photosClass">
 				<ul>
 					<li>
-						<img :src="item.url" style="width: 300px; height: 350px;" @click="handleDetails"/>
+						<img :src="item.url" style="width: 300px; height: 350px;" @click="handleDetails(item)"/>
 						<div class="productName">{{item.goodsName}}
 							<span class="price">￥{{item.price}}</span>
 							<span class="doorPrice">￥{{item.originalPrice}}</span>
@@ -22,15 +22,15 @@
 		</div>
 		<el-dialog :title="titleName" :visible.sync="dialogVisible" :close-on-click-modal="false" width="60%">
 			<merchant v-if="type === 'one'" @closeHandler="closeDialog"></merchant>
-			<product v-if="type === 'two'" @closeHandler="closeDialog"></product>
+			<product v-if="type === 'two'" @closeHandler="closeDialog" :goodsObj="goodsObj"></product>
 		</el-dialog>
 		<copyright></copyright>
 	</div>
 </template>
 
 <script>
-	import { addGoods } from '@/api/frame/shoppingCar'
-	import { getList } from '@/api/frame/goods'
+	import { getList, addGoods } from '@/api/frame/shoppingCar'
+	import { getGoodsList } from '@/api/frame/goods'
 	import homeTop from '@/views/homeTop/index'
 	import copyright from '@/views/copyright/index'
 	import product from './product'
@@ -47,6 +47,8 @@
 				id: '',
 				titleName:'',
 				listQuery: [],
+				goodsObj: null,
+				arr: [],
 				titleType: '',
 				imgUrl1: [{
 					url:  require('@/icons/img/商品详情/1.jpg'),
@@ -106,6 +108,7 @@
 		},
 		mounted() {
 			this.getList()
+			this.getGoods()
 			this.type = this.$route.query.type
 			this.id = this.$route.query.id
 			if (this.type === 'one') {
@@ -117,7 +120,7 @@
 		methods: {
 			// 初始化
 			getList() {
-				getList()
+				getGoodsList()
 				 .then(response => {
 				 		this.listQuery = response.data
 				 		for(const i in this.listQuery) {
@@ -135,17 +138,26 @@
 					return '好评不断'
 				}
 			},
-			handleDetails() {
+			handleDetails(params) {
+				this.goodsObj = params
 				this.dialogVisible = true
 			},
 			closeDialog() {
 				this.dialogVisible = false
 			},
 			intoShop() {
-				console.log("进入店铺")
 				this.$router.push({
 					name: 'shop'
 				})
+			},
+			getGoods() {
+				// 获取购物车中的商品
+				getList(sessionStorage.getItem('username'))
+				 .then(response => {
+						this.arr = response.data
+				 }).catch(() => {
+				 		return false
+				 })
 			},
 			intoCar(params) {
 				const goodsInfo = {

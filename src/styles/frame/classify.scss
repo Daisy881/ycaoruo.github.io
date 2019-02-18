@@ -37,6 +37,10 @@
 	float: right; 
 	position: relative; 
 	left: -20px;
+
+	&:hover {
+		cursor: pointer;
+	}
 }
 .imgCarClass {
 	width: 15px; 

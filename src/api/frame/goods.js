@@ -1,6 +1,6 @@
 import request from '@/utils/frame/request'
 
-export function getList() {
+export function getGoodsList() {
 	return request({
 		method: 'post',
 		url: '/api/goods/getGoods'

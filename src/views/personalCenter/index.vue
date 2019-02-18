@@ -53,10 +53,8 @@
             <el-form-item prop="dynamic">
               <el-input v-model="dialogForm.dynamic" placeholder="动态码">
                 <i slot="prefix" class="el-icon-first-iconcode" style="position: relative; left:-280px; top: 11px;"></i>
-                <template slot="append">
-                  <span v-if="codeFlag" @click="deGet">获取动态码</span>
-                  <span v-else>{{this.timeBack}}后重发</span>
-                </template>
+                <el-button v-if="codeFlag" slot="append" size="mini" style="font-size: 5px; width: 95px;" @click="doGet">获取动态码</el-button>
+                <el-button v-else slot="append" size="mini" style="font-size: 5px; width: 95px;">{{this.timeBack}}秒后重发</el-button>
               </el-input>
             </el-form-item>
           </el-col>
@@ -602,7 +600,7 @@
         }
       },
       // 获取动态码 倒计时60秒
-      deGet() {
+      doGet() {
         const num = 60
         if (!this.timer) {
           this.timeBack = num
@@ -672,10 +670,6 @@
   i {
   	padding-left: 0px;
   	margin-left: 285px;
-  }
-  .el-input__prefix {
-  	position: relative;
-  	left: -15px;
   }
   .el-form-item__content .el-input-group, .el-form-item__label, .el-tag .el-icon-close .el-input-group__append:hover {
     cursor: pointer !important;

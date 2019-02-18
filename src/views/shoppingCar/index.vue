@@ -56,7 +56,7 @@
 						this.calTotalPrice()
 				 }).catch(() => {
 				 		return false
-				  })
+				 })
 			},
 			delGoods(params) {
 				delGoods(params.id)
