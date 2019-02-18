@@ -1,7 +1,7 @@
 
 <template>
   <div class="test">
-    <h1>{{ msg }}</h1>
+    <h1>{{ msg }}你好你好你好好好好好好好好好。。。。</h1>
     <form>
       <!-- <input type="text" name="hostName" v-model="hostName"> <br>
       <input type="text" name="hostRoom" v-model="hostRoom"> <br>
