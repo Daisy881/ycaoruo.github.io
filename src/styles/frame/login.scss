@@ -26,12 +26,18 @@
 	top: -260px;
 }
 .verificationCodeClass {
-	width: 47px;
-	height: 17px;
-	border: 1px solid #66B0FF;
-	border-radius: 2px;
-	margin-left: 15px;
-	padding: 10px;
+	  width: 57px;
+    height: 17px;
+    color: white;
+    font-size: 20px;
+    border: 1px solid #66B0FF;
+    border-radius: 2px;
+    margin-left: 8px;
+    padding: 10px 10px;
+
+    &:hover {
+    	cursor: pointer;
+    }
 }
 .forgetPassword {
   width: 100px;

@@ -7,7 +7,7 @@ axios.defaults.baseURL = baseURL
 // 添加请求拦截器
 axios.interceptors.request.use(function(config) {
   // 将token给到一个前后台约定好的key中，作为请求发送
-  let token = localStorage.getItem('myToken')
+  let token = sessionStorage.getItem('myToken')
   if (token) {
     config.headers['Authorization'] = token
   }

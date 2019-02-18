@@ -15,18 +15,15 @@
 			</el-header>
 			<el-container>
 				<el-main style="margin: 70px 220px auto 420px;">
-					<all-order v-if="id === '0'"></all-order>
-					<no-pay v-else-if="id === '1'"></no-pay>
-					<no-use v-else-if="id === '2'"></no-use>
-					<no-evaluate v-else-if="id === '3'"></no-evaluate>
-					<refund v-else></refund>
+					<edit></edit>
 				</el-main>
+				<div @click="goHome" class="goHome"><<<返回首页</div>
 				<el-aside width="200px" style="position: absolute; left: 200px; top: 200px;">
 					<div class="catalogue-box">
 						<el-row :gutter="0">
 							<el-col :span="21"><div class="catalog-left" @click="allOrder">全部订单<i class="el-icon-caret-right"></i></div></el-col>
+							<el-col :span="21"><div class="catalog-left" @click="doReceived">已接单&nbsp;&nbsp;&nbsp;&nbsp;<i class="el-icon-caret-right"></i></div></el-col>
 							<el-col :span="21"><div class="catalog-left" @click="noPay">待付款&nbsp;&nbsp;&nbsp;&nbsp;<i class="el-icon-caret-right"></i></div></el-col>
-							<el-col :span="21"><div class="catalog-left" @click="noUse">待使用&nbsp;&nbsp;&nbsp;&nbsp;<i class="el-icon-caret-right"></i></div></el-col>
 							<el-col :span="21"><div class="catalog-left" @click="noEvaluate">待评价&nbsp;&nbsp;&nbsp;&nbsp;<i class="el-icon-caret-right"></i></div></el-col>
 							<el-col :span="21"><div class="catalog-left" @click="refund">退款/售后<i class="el-icon-caret-right"></i></div></el-col>
 						</el-row>
@@ -40,51 +37,58 @@
 </template>
 
 <script>
-	import allOrder from '@/views/allOrder/index'
-	import noPay from '@/views/orderManagement/noPay/index'
-	import noUse from '@/views/orderManagement/noUse/index'
-	import noEvaluate from '@/views/orderManagement/noEvaluate/index'
-	import refund from '@/views/orderManagement/refund/index'
+	import edit from './edit'
 	import copyright from '@/views/copyright/index'
 	export default {
 		name: 'orderManagement',
 		data() {
 			return {
-				id: '0'
+				id: 0
 			}
 		},
 		components: {
-			allOrder,
-			noPay,
-			noUse,
-			noEvaluate,
-			refund,
+			edit,
 			copyright
 		},
 		mounted() {
-			this.type = this.$route.query.type
 			this.id = this.$route.query.id
 		},
 		methods: {
+			goHome() {
+				this.$router.push({
+					name: 'layout'
+				})
+			},
 			allOrder() {
-				this.id = '0'
+				this.changeID(1)
+			},
+			doReceived() {
+				this.changeID(2)
 			},
 			noPay() {
-				this.id = '1'
-			},
-			noUse() {
-				this.id = '2'
+				this.changeID(3)
 			},
 			noEvaluate() {
-				this.id = '3'
+				this.changeID(4)
 			},
 			refund() {
-				this.id = '4'
+				this.changeID(5)
+			},
+			// 改变id
+			changeID(params) {
+				this.$router.push({
+					query: {
+						id: params
+					}
+				})
 			}
 		}
 	}
 </script>
 
 <style scoped>
-
+	.goHome {
+		top: 165px;
+		left: 205px;
+	}
 </style>

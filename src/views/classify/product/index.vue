@@ -4,7 +4,7 @@
 		<div class="rightFont">
 			<div style="font-size: 18px;">商品名称</div>
 			<el-button @click="addCar">加入购物车</el-button>
-			<span class="month-praise">月售：333&nbsp;&nbsp;&nbsp;&nbsp;赞：19</span>
+			<span class="month-praise">月售：333</span>
 			<div style="font-size: 18px; margin-top: -25px;">价格：<span style="color: red;">￥23</span></div>
 			<div style="font-size: 18px;">商品描述：鸡蛋卷+面+咖啡</div>
 		</div>

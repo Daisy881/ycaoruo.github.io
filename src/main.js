@@ -7,9 +7,17 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import '@/styles/index.scss'
 import './assets/icons/iconfont.css'
-import store from './store'
+
+import store from './store' // 状态管理
+
+import '@/directive/frame/filters' // 导入过滤器
+
+// 验证码
+// import cookieParase from 'cookie-parser'
+// import svgCaptcha from 'svg-captcha'
 
 Vue.use(ElementUI)
+// Vue.use(cookieParase)
 Vue.config.productionTip = false
 
 

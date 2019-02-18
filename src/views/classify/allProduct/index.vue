@@ -2,11 +2,14 @@
 	<div>
 		<home-top></home-top>
 		<div class="allPhoto">
-			<ul v-for="(item, index) in imgUrl" :value="item.value" :key="index">
+			<ul v-for="(item, index) in this.listQuery" :value="item.value" :key="index">
 				<li>
 					<img :src="item.url" style="width: 300px; height: 350px;" @click="doProduct"/>
-					<div class="productName">商品名称<span class="price">￥20</span></div>
-					<img src="@/icons/img/商品详情/购物车.png" title="加入购物车" class="imgClass" @click="intoCar"/>
+					<div class="productName">{{item.goodsName}}
+						<span class="price">￥{{item.price}}</span>
+						<span class="doorPrice">￥{{item.originalPrice}}</span>
+					</div>
+					<img src="@/icons/img/商品详情/购物车.png" title="加入购物车" class="imgClass" @click="intoCar(item)"/>
 				</li>
 			</ul>
 		</div>
@@ -18,6 +21,8 @@
 </template>
 
 <script>
+	import { addGoods } from '@/api/frame/shoppingCar'
+	import { getList } from '@/api/frame/goods'
 	import homeTop from '@/views/homeTop/index'
 	import copyright from '@/views/copyright/index'
 	import product from '@/views/classify/product/index'
@@ -25,6 +30,7 @@
 		name: 'allProduct',
 		data() {
 			return {
+				listQuery: [],
 				imgUrl: [{
 					url: require('@/icons/img/商品详情/1.jpg'),
 					value: '1'
@@ -64,15 +70,39 @@
 			copyright,
 			product
 		},
+		mounted() {
+			this.getList()
+		},
 		methods: {
+			// 初始化
+			getList() {
+				getList()
+				 .then(response => {
+				 		this.listQuery = response.data
+				 })
+			},
 			doProduct() {
 				this.dialogVisible = true
 			},
 			closeDialog() {
 				this.dialogVisible = false
 			},
-			intoCar() {
-				console.log("加入购物车")
+			intoCar(params) {
+				const goodsInfo = {
+					shopName: params.shopName,
+					username: sessionStorage.getItem('username'),
+					picAddress: params.picAddress,
+					goodsName: params.goodsName,
+					price: params.price,
+					count: 1
+				}
+				addGoods(goodsInfo)
+				 .then(response => {
+				 		this.$message({
+				 			message: '加入购物车成功',
+				 			type: 'success'
+				 		})
+				 })
 			}
 		}
 	}

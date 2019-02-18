@@ -45,13 +45,18 @@
           <el-col :span="21">
             <el-form-item prop="changeNumber">
               <el-input v-model="dialogForm.changeNumber" placeholder="请输入新手机号" @blur="pNumberExit">
+                <i slot="prefix" class="el-icon-first-mobile" style="position: relative; left: -280px; top: 1px;"></i>
               </el-input>
             </el-form-item>
           </el-col>
           <el-col :span="21">
             <el-form-item prop="dynamic">
               <el-input v-model="dialogForm.dynamic" placeholder="动态码">
-                <template slot="append"><span @click="deGet">获取动态码</span></template>
+                <i slot="prefix" class="el-icon-first-iconcode" style="position: relative; left:-280px; top: 11px;"></i>
+                <template slot="append">
+                  <span v-if="codeFlag" @click="deGet">获取动态码</span>
+                  <span v-else>{{this.timeBack}}后重发</span>
+                </template>
               </el-input>
             </el-form-item>
           </el-col>
@@ -143,6 +148,9 @@
         dialogEdit: false,
         loginTip: '',
         loginTip2: '',
+        codeFlag: true,
+        timeBack: '',
+        timer: null,
 				formData: {
 					headPortrait: '',
 					nickName: '',
@@ -429,10 +437,16 @@
       },
       // 初始化获取用户信息
       getList() {
-        getList(localStorage.getItem('username'))
+        getList(sessionStorage.getItem('username'))
          .then(response => {
           for(const i in response.data) {
             this.formData = response.data[i]
+            // console.log(this.formData.headPortrait,55)
+            // if (this.formData.headPortrait) {
+              // this.dialogImageUrl = this.formData.headPortrait
+            // } else {
+            //   this.dialogImageUrl = ''
+            // }
             this.isSafety()
           }
         }).catch(() => { })
@@ -455,8 +469,23 @@
       },
 			handleSuccess(res, file) {
 				this.dialogImageUrl = URL.createObjectURL(file.raw)
+        console.log(this.dialogImageUrl, 22)
+        // const reader = new FileReader()
+        // reader.readAsDataURL(file)
+        // reader.onload = () => {
+        //   const _base64 = reader.result
+        //   console.log(_base64)
+        // }
 			},
+      // 图片上传前 判断格式 将缓存地址转为base64位
 			handleBeforeUpload(file) {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => {
+          const _base64 = reader.result
+          this.dialogImageUrl1 = this.convertBase64ToBlob(_base64)
+          console.log(this.dialogImageUrl1, 11)
+        }
 				const isJPG = file.type === 'image/jpeg'
         const isLt2M = file.size / 1024 / 1024 < 2
 
@@ -468,6 +497,29 @@
         }
         return isJPG && isLt2M
 			},
+      // 将base64编码格式的图片转为blob对象
+      convertBase64ToBlob (base64){
+        var base64Arr = base64.split(',')
+        var imgtype = ''
+        var base64String = ''
+        if(base64Arr.length > 1){
+          //如果是图片base64，去掉头信息
+          base64String = base64Arr[1];
+          imgtype = base64Arr[0].substring(base64Arr[0].indexOf(':') + 1, base64Arr[0].indexOf(';'))
+        }
+        // 将base64解码
+        var bytes = atob(base64String)
+        //var bytes = base64
+        var bytesCode = new ArrayBuffer(bytes.length)
+         // 转换为类型化数组
+        var byteArray = new Uint8Array(bytesCode)
+        // 将base64转换为ascii码
+        for (var i = 0; i < bytes.length; i++) {
+            byteArray[i] = bytes.charCodeAt(i)
+        }
+        // 生成Blob对象（文件对象）
+        return new Blob( [bytesCode] , {type : imgtype})
+      },
 			handleChange() {
 
 			},
@@ -480,9 +532,14 @@
               cancelButtonText: '取消',
               type: 'warning'
             }).then(() => {
+              if (!this.dialogImageUrl) {
+                this.formData.headPortrait = ''
+              } else {
+                this.formData.headPortrait = this.dialogImageUrl
+              }
               const userInfo = {
                 headPortrait: this.formData.headPortrait,
-                username: localStorage.getItem('username'),
+                username: sessionStorage.getItem('username'),
                 nickName: this.formData.nickName,
                 birthday: this.formData.birthday,
                 // shippingAddress: this.formData.shippingAddress,
@@ -544,9 +601,22 @@
           }
         }
       },
-      // 获取动态码
+      // 获取动态码 倒计时60秒
       deGet() {
-
+        const num = 60
+        if (!this.timer) {
+          this.timeBack = num
+          this.codeFlag = false
+          this.timer = setInterval(() => {
+            if (this.timeBack > 0 && this.timeBack <= num) {
+              this.timeBack --
+            } else {
+              this.codeFlag = true
+              clearInterval(this.timer)
+              this.timer = null
+            }
+          }, 1000)
+        }
       },
       doCacel() {
         this.dialogChange = false

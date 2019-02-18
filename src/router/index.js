@@ -28,7 +28,7 @@ const router = new Router({
 
 // 注册一个全局守卫，作用是在路由跳转前对路由进行判断，因为某些页面必须是用户登录之后才可以进入
 router.beforeEach((to, from, next) => {
-  let token = localStorage.getItem('myToken')
+  let token = sessionStorage.getItem('myToken')
   if (token) { // 用户已经登录
     next()
   } else {

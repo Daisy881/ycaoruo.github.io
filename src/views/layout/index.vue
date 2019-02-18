@@ -215,7 +215,12 @@
 				})
 			},
 			doOrder() {
-				this.$router.push('orderManagement')
+				this.$router.push({
+					name: 'orderManagement',
+					query: {
+						id: 1
+					}
+				})
 			},
 			doPCenter() {
 				this.$router.push('personalCenter')

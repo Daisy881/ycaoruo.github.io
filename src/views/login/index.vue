@@ -39,7 +39,9 @@
 													</el-input>
 												</el-form-item>
 											</el-col>
-											<el-col :span="5" class="verificationCodeClass">{{this.vNumber}}</el-col>
+											<el-col :span="5">
+												<div class="verificationCodeClass" @click="handleCode">{{this.vNumber}}</div>
+											</el-col>
 										</el-row>
 									</el-col>
 								</el-row>
@@ -59,7 +61,8 @@
 										<el-form-item label="动态码" prop="dynamicCode">
 											<el-input v-model="formData2.dynamicCode" placeholder="动态码" @keyup.enter.native="loginButton">
 												<i slot="prefix" class="el-icon-first-iconcode"></i>
-												<el-button slot="append" size="mini" style="font-size: 5px; width: 95px;" @click="getCode">获取验证码</el-button>
+												<el-button v-if="codeFlag" slot="append" size="mini" style="font-size: 5px; width: 95px;" @click="getCode">获取动态码</el-button>
+												<el-button v-else slot="append" size="mini" style="font-size: 5px; width: 95px;">{{this.timeBack}}秒后重发</el-button>
 											</el-input>
 										</el-form-item>
 									</el-col>
@@ -185,9 +188,12 @@
 				loginTip: '',
 				loginTip2: '',
 				loginTip3: '',
+				codeFlag: true,
 				dialogVisible: false,
 				verificationCodeTip: false,
-				vNumber: '12ve',
+				vNumber: '',
+				timeBack: '',
+				timer: null,
 				protocol: '这是一段协议w哒哒哒哒哒哒多多多多多多多多wwwwwwwwsssssssss突突突突突突拖拖拖拖拖拖拖拖拖拖拖sssssssssssssssssssssssssssssssssssssss',
 				formData1: {
 					username: '',
@@ -229,11 +235,6 @@
 					}]
 				},
 				rules3: {
-					// rePhoneNum: [{
-					// 	required: true,
-					// 	validator: validatePhone,
-					// 	trigger: 'blur'
-					// }],
 					reDynamicCode: [{
 						required: true,
 						validator: validateCode,
@@ -257,6 +258,7 @@
 		},
 		mounted() {
 			this.type = this.$route.query.type
+			this.generatedCode()
 		},
 		watch: {
 			'$route': 'fetchData'
@@ -281,7 +283,7 @@
     			let phoneNumber = this.formData2.phoneNumber
 					loginByNumber(phoneNumber)
 					 .then(response => {
-						localStorage.setItem('myToken', response.data.token)
+						sessionStorage.setItem('myToken', response.data.token)
 						this.$store.dispatch('Login', response.data)
 						if (response.data.status === 400) {
 							this.loginTip2 = '不存在此账户，请重新输入'
@@ -308,10 +310,36 @@
 					}).catch(() => {})
     		}
       },
+      // 获取手机动态码 60秒倒计时
       getCode(){
-      	if (!this.loginTip2) {
-      		console.log('获取验证码')
+      	const num = 60
+      	if (!this.timer) {
+      		this.timeBack = num
+      		this.codeFlag = false
+	      	this.timer = setInterval(() => {
+	      		if (this.timeBack > 0 && this.timeBack <= num) {
+	      			this.timeBack --
+	      		} else {
+	      			this.codeFlag = true
+	      			clearInterval(this.timer)
+	      			this.timer = null
+	      		}
+	      	}, 1000)
       	}
+      },
+      // 生成随机四位由数字和英文组成的验证码
+      generatedCode() {
+      	const random = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+      	let code = ''
+      	for (let i = 0; i < 4; i++) {
+      		let index = Math.floor(Math.random() * 62)
+      		code += random[index]
+      	}
+      	this.vNumber = code
+      },
+      // 点击图片刷新
+      handleCode() {
+      	this.generatedCode()
       },
       freeRegistration() {
       	this.$router.push({
@@ -331,7 +359,7 @@
 							}
 							loginByUsername(userInfo)
 							 .then(response => {
-								localStorage.setItem('myToken', response.data.token)
+								sessionStorage.setItem('myToken', response.data.token)
 								this.$store.dispatch('Login', response.data)
 								if (response.data.status === 200) {
 									this.$router.push({
@@ -393,5 +421,8 @@
 	i {
 		padding-top: 12px;
 		padding-left: 5px;
+	}
+	.verificationCodeClass {
+		background: url(../../icons/img/backPic.png) no-repeat -8px;
 	}
 </style>

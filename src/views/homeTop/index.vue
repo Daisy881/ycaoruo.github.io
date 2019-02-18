@@ -153,9 +153,9 @@
 			shoppingCar
 		},
 		mounted() {
-			if (localStorage.getItem('myToken') !== null) { // token不为空 用户已登录
+			if (sessionStorage.getItem('myToken') !== null) { // token不为空 用户已登录
 				this.state = 1
-				this.user = localStorage.getItem('username')
+				this.user = sessionStorage.getItem('username')
 			} else {
 				this.state = 0
 			}
@@ -191,7 +191,7 @@
 				this.state = 0
 			},
 			handleShoppingCar(){
-				if (localStorage.getItem('myToken')) {
+				if (sessionStorage.getItem('myToken')) {
 					this.asideVisible = !this.asideVisible
 				} else {
 					this.$router.push({

@@ -5,14 +5,14 @@ const user = {
   },
   mutations: {
     SET_STATE: (state, data) => {
-      state.token = localStorage.getItem('myToken')
-      localStorage.setItem('username', data.username)
+      state.token = sessionStorage.getItem('myToken')
+      sessionStorage.setItem('username', data.username)
       state.token = data.token
       state.username = data.username
     },
     REMOVE_STATE: state => {
-      localStorage.removeItem('myToken')
-      localStorage.removeItem('username')
+      sessionStorage.removeItem('myToken')
+      sessionStorage.removeItem('username')
       state.token = ''
       state.username = ''
     }
