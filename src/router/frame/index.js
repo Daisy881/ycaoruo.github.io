@@ -5,7 +5,6 @@ import classify from './classify'
 import allProduct from './allProduct'
 import classifyEdit from './classifyEdit'
 import pay from './pay'
-import test from './test'
 
 const frameRouter = [
 	login,
@@ -14,8 +13,7 @@ const frameRouter = [
 	classify,
 	classifyEdit,
 	allProduct,
-	pay,
-	test
+	pay
 ]
 
 export default frameRouter 
