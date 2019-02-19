@@ -24,6 +24,9 @@ var sqlMap = {
   goods: {
     getGoods: 'select * from goods_info'
   },
+  shops: {
+    getShops: 'select * from shops_info'
+  },
   // 订单支付
   payOrder: {
     getPayOrder: 'select * from payOrder where username = ?'

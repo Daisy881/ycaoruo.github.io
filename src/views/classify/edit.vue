@@ -4,13 +4,13 @@
 		<div class="shopping-container">
 		<div @click="goHome" class="goHome"><<<返回首页</div>
 			<div class="leftFont">
-				<div style="font-size: 18px;">店铺名称</div>
+				<div style="font-size: 18px;">{{this.listObj.shopsName}}</div>
 				<el-rate v-model="rateValue" disabled show-score text-color="#ff9900" style="margin-left: -20px;" score-template="{value}分"></el-rate>
-				<span class="giveMark">人均：￥19</span>
-				<div style="font-size: 18px; margin-top: -25px;">地址：北京市朝阳区</div>
-				<div style="font-size: 18px;">电话：010-88489254</div>
-				<div style="font-size: 18px;">营业时间</div>
-				<div style="font-size: 14px; margin-top: 10px;">提供WIFI</div>
+				<span class="giveMark">人均：￥{{listObj.perAverage}}</span>
+				<div style="font-size: 18px; margin-top: -25px;">地址：{{listObj.address}}</div>
+				<div style="font-size: 18px;">电话：{{listObj.phoneNumber}}</div>
+				<div style="font-size: 18px;">营业时间：{{listObj.openingHours}}</div>
+				<div style="font-size: 14px; margin-top: 10px;">{{listObj.WIFI}}</div>
 			</div>
 			<img src="@/icons/img/商品详情/1.jpg" style="width: 260px; height: 240px;">
 			<div class="sales">
@@ -59,6 +59,7 @@
 		data() {
 			return {
 				rateValue: 3.4,
+				listObj: null,
 				imgUrl: [{
 					url:  require('@/icons/img/商品详情/1.jpg'),
         	value: '1'
@@ -87,6 +88,14 @@
 		components: {
 			homeTop,
 			copyright
+		},
+		created() {
+			this.listObj = JSON.parse(sessionStorage.getItem('listObj'))
+			if (this.listObj.WIFI === 0) {
+				this.listObj.WIFI = "本店暂不提供WIFI"
+			} else {
+				this.listObj.WIFI = "本店提供WIFI"
+			}
 		},
 		methods: {
 			handleDetails() {

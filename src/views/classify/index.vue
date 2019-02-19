@@ -10,18 +10,22 @@
 				<ul>
 					<li>
 						<img :src="item.url" style="width: 300px; height: 350px;" @click="handleDetails(item)"/>
-						<div class="productName">{{item.goodsName}}
+						<div class="productName" v-if="type === 'two'">{{item.goodsName}}
 							<span class="price">￥{{item.price}}</span>
 							<span class="doorPrice">￥{{item.originalPrice}}</span>
 						</div>
-						<img src="@/icons/img/商家详情/进入店铺.png" title="进入店铺" class="imgClass" @click="intoShop" v-if="type === 'one'"/>
+						<div class="productName" v-if="type === 'one'">{{item.shopsName}}
+							<span class="rate">评分:{{item.shops_rate}}分</span>
+							<span class="rate" style="color: #5B5B5B;">人均:￥{{item.perAverage}}</span>
+						</div>
+						<img src="@/icons/img/商家详情/进入店铺.png" title="进入店铺" class="imgClass" @click="intoShop(item)" v-if="type === 'one'"/>
 						<img src="@/icons/img/商品详情/购物车.png" title="加入购物车" class="imgClass" @click="intoCar(item)" v-else/>
 					</li>
 				</ul>
 			</div>
 		</div>
 		<el-dialog :title="titleName" :visible.sync="dialogVisible" :close-on-click-modal="false" width="60%">
-			<merchant v-if="type === 'one'" @closeHandler="closeDialog"></merchant>
+			<merchant v-if="type === 'one'" @closeHandler="closeDialog" :shopsObj="shopsObj"></merchant>
 			<product v-if="type === 'two'" @closeHandler="closeDialog" :goodsObj="goodsObj"></product>
 		</el-dialog>
 		<copyright></copyright>
@@ -31,6 +35,7 @@
 <script>
 	import { getList, addGoods } from '@/api/frame/shoppingCar'
 	import { getGoodsList } from '@/api/frame/goods'
+	import { getShopsList } from '@/api/frame/shops'
 	import homeTop from '@/views/homeTop/index'
 	import copyright from '@/views/copyright/index'
 	import product from './product'
@@ -48,6 +53,7 @@
 				titleName:'',
 				listQuery: [],
 				goodsObj: null,
+				shopsObj: null,
 				arr: [],
 				titleType: '',
 				imgUrl1: [{
@@ -107,20 +113,31 @@
 			merchant
 		},
 		mounted() {
-			this.getList()
-			this.getGoods()
 			this.type = this.$route.query.type
 			this.id = this.$route.query.id
 			if (this.type === 'one') {
 				this.titleName = '商家详情'
+				this.getShopsList()
 			} else {
 				this.titleName = '商品详情'
+				this.getGoodsList()
 			}
+			this.getGoods()
 		},
 		methods: {
-			// 初始化
-			getList() {
+			// 商品初始化
+			getGoodsList() {
 				getGoodsList()
+				 .then(response => {
+				 		this.listQuery = response.data
+				 		for(const i in this.listQuery) {
+				 			this.listQuery[i].type = this.doType(this.listQuery[i].type)
+				 		}
+				 })
+			},
+			// 店铺初始化
+			getShopsList() {
+				getShopsList()
 				 .then(response => {
 				 		this.listQuery = response.data
 				 		for(const i in this.listQuery) {
@@ -140,12 +157,15 @@
 			},
 			handleDetails(params) {
 				this.goodsObj = params
+				this.shopsObj = params
 				this.dialogVisible = true
 			},
 			closeDialog() {
 				this.dialogVisible = false
 			},
-			intoShop() {
+			// 进入店铺 将此对象存在sessionStorage中
+			intoShop(params) {
+				sessionStorage.setItem('listObj', JSON.stringify(params))
 				this.$router.push({
 					name: 'shop'
 				})
@@ -155,10 +175,11 @@
 				getList(sessionStorage.getItem('username'))
 				 .then(response => {
 						this.arr = response.data
-				 }).catch(() => {
+				 }).catch(() => { 
 				 		return false
 				 })
 			},
+			// 加入购物车
 			intoCar(params) {
 				const goodsInfo = {
 					shopName: params.shopName,

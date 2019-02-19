@@ -8,6 +8,7 @@ const userApi = require('./api/user')
 const orderApi = require('./api/order')
 const shoppingCarApi = require('./api/shoppingCar')
 const goodsApi = require('./api/goods')
+const shopsApi = require('./api/shops')
  
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
@@ -17,6 +18,7 @@ app.use('/api/user', userApi)
 app.use('/api/order', orderApi)
 app.use('/api/shoppingCar', shoppingCarApi)
 app.use('/api/goods', goodsApi)
+app.use('/api/shops', shopsApi)
  
 // 监听端口
 app.listen(3000)
