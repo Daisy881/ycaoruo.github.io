@@ -112,7 +112,7 @@
 			product,
 			merchant
 		},
-		mounted() {
+		created() {
 			this.type = this.$route.query.type
 			this.id = this.$route.query.id
 			if (this.type === 'one') {
@@ -181,6 +181,10 @@
 			},
 			// 加入购物车
 			intoCar(params) {
+				this.$nextTick(function() {
+					console.log(this.arr,11)
+				})
+				this.getGoods()
 				const goodsInfo = {
 					shopName: params.shopName,
 					username: sessionStorage.getItem('username'),

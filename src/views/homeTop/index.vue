@@ -165,7 +165,6 @@
 		methods: {
 			getShadow(e){
 				e.stopPropagation()
-				console.log(11)
 				this.asideVisible = false
 			},
 			doUser() {

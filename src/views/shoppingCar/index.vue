@@ -26,6 +26,7 @@
 				</el-row>
 			</div>
 		</div>
+		<div v-show="this.listQuery.length===0" style="margin: 20px 100px;">对不起，没有任何商品！</div>
 		<div style="background-color: #66B0FF; height: 80px;">
 			<div class="total-font">合计：</div>
 			<div class="total-nums">￥{{this.totalPrice | priceFormat}}</div>
