@@ -22,7 +22,7 @@
 							<span class="price prices">￥20</span>
 							<span class="doorPrice">￥35</span>
 						</div>
-						<img src="@/icons/img/商品详情/购物车.png" title="加入购物车" class="imgClass imgCarClass" @click="intoCar"/>
+						<img src="@/icons/img/商品详情/购物车.png" title="加入购物车" class="imgClass imgCarClass" @click="intoCar()"/>
 					</li>
 				</ul>
 			</div>

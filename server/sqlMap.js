@@ -30,6 +30,10 @@ var sqlMap = {
   // 订单支付
   payOrder: {
     getPayOrder: 'select * from payOrder where username = ?'
+  },
+  // 头像
+  headPortrait: {
+    saveHeadPortrait: 'insert into head_portrait (originalname, path, mimetype) values (?, ?, ?)'
   }
 }
  

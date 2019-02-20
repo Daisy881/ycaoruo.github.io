@@ -7,10 +7,14 @@
 			<div style="margin: -20px auto 30px 0;">个人设置</div>
 			<el-form :model="formData" ref="ruleForm" :rules="rules" label-position="left" label-width="25%">
 				<el-form-item prop="headPortrait" label="头像">
-					<el-upload v-model="formData.headPortrait" action="https://jsonplaceholder.typicode.com/posts/" :on-success="handleSuccess" :show-file-list="false" :before-upload="handleBeforeUpload">
+					<!-- <el-upload v-model="formData.headPortrait" action="https://jsonplaceholder.typicode.com/posts/" :on-success="handleSuccess" :show-file-list="false" :before-upload="handleBeforeUpload">
 						<img v-if="dialogImageUrl" :src="dialogImageUrl" alt="" class="avatar" style="margin-bottom: -13px;">
 						<i v-else class="el-icon-plus avatar-uploader-icon"></i>
-					</el-upload>
+					</el-upload> -->
+          <a class="touxiang">
+            <img :src="dialogImageUrl" class="avatar" v-if="dialogImageUrl" alt="" />
+            <input type="file" name="headPortrait" ref="upload" capture="camera" accept="image/*" @change="getImg">
+          </a>
 				</el-form-item>
 				<el-form-item prop="nickName" label="昵称">
 					<el-input v-model="formData.nickName" maxlength="15" @blur="nickNameExit"></el-input>
@@ -94,8 +98,9 @@
 </template>
 
 <script>
-  import { getList, editList } from '@/api/frame/user.js'
-  import { loginByNumber } from '@/api/frame/login.js'
+  import { getList, editList } from '@/api/frame/user'
+  import { loginByNumber } from '@/api/frame/login'
+  import { saveHeadPortrait } from '@/api/frame/uploadImg'
 	import copyright from '@/views/copyright/index'
 	export default {
 		name: 'personalCenter',
@@ -464,6 +469,14 @@
             }
           }).catch(() => {})
         }
+      },
+      getImg() {
+        let formData = new FormData()
+        formData.append('file', this.$refs.upload.files[0])
+        saveHeadPortrait(formData)
+         .then(response => {
+            console.log(response, 33)
+         })
       },
 			handleSuccess(res, file) {
 				this.dialogImageUrl = URL.createObjectURL(file.raw)
