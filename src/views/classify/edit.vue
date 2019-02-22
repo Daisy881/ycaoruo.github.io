@@ -12,7 +12,7 @@
 				<div style="font-size: 18px;">营业时间：{{listObj.openingHours}}</div>
 				<div style="font-size: 14px; margin-top: 10px;">{{listObj.WIFI}}</div>
 			</div>
-			<img src="@/icons/img/商品详情/1.jpg" style="width: 260px; height: 240px;">
+			<img src="@/icons/img/goods/1.jpg" style="width: 260px; height: 240px;">
 			<div class="sales">
 				<span style="font-size: 18px;">优惠促销</span>
 				<ul v-for="(item, index) in imgUrl" :value="item.value" :key="index" style="margin-top: 20px">
@@ -22,7 +22,7 @@
 							<span class="price prices">￥20</span>
 							<span class="doorPrice">￥35</span>
 						</div>
-						<img src="@/icons/img/商品详情/购物车.png" title="加入购物车" class="imgClass imgCarClass" @click="intoCar()"/>
+						<img src="@/icons/img/goods/shoppingCar.png" title="加入购物车" class="imgClass imgCarClass" @click="intoCar()"/>
 					</li>
 				</ul>
 			</div>
@@ -61,19 +61,19 @@
 				rateValue: 3.4,
 				listObj: null,
 				imgUrl: [{
-					url:  require('@/icons/img/商品详情/1.jpg'),
+					url:  require('@/icons/img/goods/1.jpg'),
         	value: '1'
 				},{
-					url:  require('@/icons/img/商品详情/2.jpg'),
+					url:  require('@/icons/img/goods/2.jpg'),
         	value: '2'
 				},{
-					url:  require('@/icons/img/商品详情/3.jpg'),
+					url:  require('@/icons/img/goods/3.jpg'),
         	value: '3'
 				},{
-					url:  require('@/icons/img/商品详情/4.jpg'),
+					url:  require('@/icons/img/goods/4.jpg'),
         	value: '4'
 				},{
-					url:  require('@/icons/img/商品详情/5.jpg'),
+					url:  require('@/icons/img/goods/5.jpg'),
         	value: '5'
 				}],
 				formData: {

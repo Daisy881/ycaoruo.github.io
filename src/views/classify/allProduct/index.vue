@@ -9,11 +9,11 @@
 						<span class="price">￥{{item.price}}</span>
 						<span class="doorPrice">￥{{item.originalPrice}}</span>
 					</div>
-					<img src="@/icons/img/商品详情/购物车.png" title="加入购物车" class="imgClass" @click="intoCar(item)"/>
+					<img src="@/icons/img/goods/shoppingCar.png" title="加入购物车" class="imgClass" @click="intoCar(item)"/>
 				</li>
 			</ul>
 		</div>
-		<el-dialog title="商品详情" :visible.sync="dialogVisible" :close-on-click-modal="false" width="60%">
+		<el-dialog title="goods" :visible.sync="dialogVisible" :close-on-click-modal="false" width="60%">
 			<product @closeHandler="closeDialog" :goodsObj="goodsObj"></product>
 		</el-dialog>
 		<copyright></copyright>
@@ -33,34 +33,34 @@
 				goodsObj: null,
 				listQuery: [],
 				imgUrl: [{
-					url: require('@/icons/img/商品详情/1.jpg'),
+					url: require('@/icons/img/goods/1.jpg'),
 					value: '1'
 				},{
-					url: require('@/icons/img/商品详情/2.jpg'),
+					url: require('@/icons/img/goods/2.jpg'),
 					value: '2'
 				},{
-					url: require('@/icons/img/商品详情/3.jpg'),
+					url: require('@/icons/img/goods/3.jpg'),
 					value: '3'
 				},{
-					url: require('@/icons/img/商品详情/4.jpg'),
+					url: require('@/icons/img/goods/4.jpg'),
 					value: '4'
 				},{
-					url: require('@/icons/img/商品详情/5.jpg'),
+					url: require('@/icons/img/goods/5.jpg'),
 					value: '5'
 				},{
-					url: require('@/icons/img/商品详情/5.jpg'),
+					url: require('@/icons/img/goods/5.jpg'),
 					value: '5'
 				},{
-					url: require('@/icons/img/商品详情/5.jpg'),
+					url: require('@/icons/img/goods/5.jpg'),
 					value: '5'
 				},{
-					url: require('@/icons/img/商品详情/5.jpg'),
+					url: require('@/icons/img/goods/5.jpg'),
 					value: '5'
 				},{
-					url: require('@/icons/img/商品详情/5.jpg'),
+					url: require('@/icons/img/goods/5.jpg'),
 					value: '5'
 				},{
-					url: require('@/icons/img/商品详情/5.jpg'),
+					url: require('@/icons/img/goods/5.jpg'),
 					value: '5'
 				}],
 				dialogVisible: false

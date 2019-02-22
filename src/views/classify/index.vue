@@ -9,7 +9,7 @@
 			<div class="photosClass">
 				<ul>
 					<li>
-						<img :src="item.url" style="width: 300px; height: 350px;" @click="handleDetails(item)"/>
+						<img :src="item.picAddress" style="width: 300px; height: 350px;" @click="handleDetails(item)"/>
 						<div class="productName" v-if="type === 'two'">{{item.goodsName}}
 							<span class="price">￥{{item.price}}</span>
 							<span class="doorPrice">￥{{item.originalPrice}}</span>
@@ -18,8 +18,8 @@
 							<span class="rate">评分:{{item.shops_rate}}分</span>
 							<span class="rate" style="color: #5B5B5B;">人均:￥{{item.perAverage}}</span>
 						</div>
-						<img src="@/icons/img/商家详情/进入店铺.png" title="进入店铺" class="imgClass" @click="intoShop(item)" v-if="type === 'one'"/>
-						<img src="@/icons/img/商品详情/购物车.png" title="加入购物车" class="imgClass" @click="intoCar(item)" v-else/>
+						<img src="@/icons/img/shops/intoShop.png" title="进入店铺" class="imgClass" @click="intoShop(item)" v-if="type === 'one'"/>
+						<img src="@/icons/img/goods/shoppingCar.png" title="加入购物车" class="imgClass" @click="intoCar(item)" v-else/>
 					</li>
 				</ul>
 			</div>
@@ -57,51 +57,51 @@
 				arr: [],
 				titleType: '',
 				imgUrl1: [{
-					url:  require('@/icons/img/商品详情/1.jpg'),
+					url:  require('@/icons/img/goods/1.jpg'),
         	value: '1'
 				},{
-					url:  require('@/icons/img/商品详情/2.jpg'),
+					url:  require('@/icons/img/goods/2.jpg'),
         	value: '2'
 				},{
-					url:  require('@/icons/img/商品详情/3.jpg'),
+					url:  require('@/icons/img/goods/3.jpg'),
         	value: '3'
 				},{
-					url:  require('@/icons/img/商品详情/4.jpg'),
+					url:  require('@/icons/img/goods/4.jpg'),
         	value: '4'
 				},{
-					url:  require('@/icons/img/商品详情/5.jpg'),
+					url:  require('@/icons/img/goods/5.jpg'),
         	value: '5'
 				}],
 				imgUrl2: [{
-					url:  require('@/icons/img/商品详情/1.jpg'),
+					url:  require('@/icons/img/goods/1.jpg'),
         	value: '1'
 				},{
-					url:  require('@/icons/img/商品详情/2.jpg'),
+					url:  require('@/icons/img/goods/2.jpg'),
         	value: '2'
 				},{
-					url:  require('@/icons/img/商品详情/3.jpg'),
+					url:  require('@/icons/img/goods/3.jpg'),
         	value: '3'
 				},{
-					url:  require('@/icons/img/商品详情/4.jpg'),
+					url:  require('@/icons/img/goods/4.jpg'),
         	value: '4'
 				},{
-					url:  require('@/icons/img/商品详情/5.jpg'),
+					url:  require('@/icons/img/goods/5.jpg'),
         	value: '5'
 				}],
 				imgUrl3: [{
-					url:  require('@/icons/img/商品详情/1.jpg'),
+					url:  require('@/icons/img/goods/1.jpg'),
         	value: '1'
 				},{
-					url:  require('@/icons/img/商品详情/2.jpg'),
+					url:  require('@/icons/img/goods/2.jpg'),
         	value: '2'
 				},{
-					url:  require('@/icons/img/商品详情/3.jpg'),
+					url:  require('@/icons/img/goods/3.jpg'),
         	value: '3'
 				},{
-					url:  require('@/icons/img/商品详情/4.jpg'),
+					url:  require('@/icons/img/goods/4.jpg'),
         	value: '4'
 				},{
-					url:  require('@/icons/img/商品详情/5.jpg'),
+					url:  require('@/icons/img/goods/5.jpg'),
         	value: '5'
 				}]
 			}
@@ -116,10 +116,10 @@
 			this.type = this.$route.query.type
 			this.id = this.$route.query.id
 			if (this.type === 'one') {
-				this.titleName = '商家详情'
+				this.titleName = 'shops'
 				this.getShopsList()
 			} else {
-				this.titleName = '商品详情'
+				this.titleName = 'goods'
 				this.getGoodsList()
 			}
 			this.getGoods()
@@ -130,6 +130,7 @@
 				getGoodsList()
 				 .then(response => {
 				 		this.listQuery = response.data
+				 	console.log(this.listQuery,11)
 				 		for(const i in this.listQuery) {
 				 			this.listQuery[i].type = this.doType(this.listQuery[i].type)
 				 		}

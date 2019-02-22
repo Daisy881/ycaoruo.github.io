@@ -131,8 +131,9 @@
 </template>
 
 <script>
-	import { loginByUsername, loginByNumber } from '@/api/frame/login.js'
-	import { addUser } from '@/api/frame/user.js'
+	import { loginByUsername, loginByNumber } from '@/api/frame/login'
+	import axios from 'axios'
+	import { addUser } from '@/api/frame/user'
 	import copyright from '@/views/copyright/index'
 
 	export default {
@@ -311,21 +312,46 @@
     		}
       },
       // 获取手机动态码 60秒倒计时
-      getCode(){
-      	const num = 60
-      	if (!this.timer) {
-      		this.timeBack = num
-      		this.codeFlag = false
-	      	this.timer = setInterval(() => {
-	      		if (this.timeBack > 0 && this.timeBack <= num) {
-	      			this.timeBack --
-	      		} else {
-	      			this.codeFlag = true
-	      			clearInterval(this.timer)
-	      			this.timer = null
-	      		}
-	      	}, 1000)
+      getCode(){ 
+      	if (this.formData2.phoneNumber === '') {
+      		this.loginTip2 = '请输入手机号'
+      	} else {
+      		const num = 60
+	      	if (!this.timer) {
+	      		this.timeBack = num
+	      		this.codeFlag = false
+		      	this.timer = setInterval(() => {
+		      		if (this.timeBack > 0 && this.timeBack <= num) {
+		      			this.timeBack --
+		      		} else {
+		      			this.codeFlag = true
+		      			clearInterval(this.timer)
+		      			this.timer = null
+		      		}
+		      	}, 1000)
+	      	}
+	      	let code = Math.floor(Math.random() * 1000000)
+	      	if (this.type === 'use') {
+	      		this.sendCode(this.formData2.phoneNumber, code)
+	      	} else {
+	      		this.sendCode(this.formData3.rePhoneNum, code)
+	      	}
       	}
+      },
+      // 发送短信验证码
+      sendCode(tel, code) {
+      	const text='验证码：'+ code +',您正在使用登陆功能,该验证码仅用于身份验证,在五分钟之内有效，请勿泄露给其他人使用。' //短信内容模板，已经在sms平台绑定此内容，所以会比普通的更快到达用户手机。
+		    let params = new URLSearchParams()
+		    params.append('Uid','Daisy')
+		    params.append('Key','d41d8cd98f00b204e980')
+		    params.append('smsMob',tel)
+		    params.append('smsText',text)
+		    console.log(params, 444444)
+		    this.$axios.post('http://utf8.api.smschinese.cn/', params, { //post请求，在请求时会自动把params拼接再URLSearchParams后面
+		        headers:{ 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8' }, //必须要加头
+		     }).then(function (response) {
+		       console.log(response, 6666666)}
+		     )
       },
       // 生成随机四位由数字和英文组成的验证码
       generatedCode() {
@@ -372,17 +398,33 @@
 						}
 					})
       	} else {
-      		this.$refs.ruleForm2.validate(valid => {
-						if (valid) {
-							if (this.formData2.dynamicCode) { // 验证码正确
-								this.$router.push({
-									name: 'layout'
+      		if (this.formData2.phoneNumber === '') {
+	      		this.loginTip2 = '账户不能为空'
+	      	} else if (!(/^1(3|4|5|7|8)\d{9}$/).test(this.formData2.phoneNumber)) {
+	      		this.loginTip2 = '请输入正确的手机号'
+	      	} else {
+	    			let phoneNumber = this.formData2.phoneNumber
+						loginByNumber(phoneNumber)
+						 .then(response => {
+							sessionStorage.setItem('myToken', response.data.token)
+							this.$store.dispatch('Login', response.data)
+							if (response.data.status === 400) {
+								this.loginTip2 = '不存在此账户，请重新输入'
+							} else {
+								this.loginTip2 = ''
+								this.$refs.ruleForm2.validate(valid => {
+									if (valid) {
+										if (this.formData2.dynamicCode) { // 验证码正确
+											this.$router.push({
+												name: 'layout'
+											})
+										}
+									}
 								})
 							}
-						} else {
-							this.loginTip2 = ''
-						}
-					})
+						}).catch(() => {})
+	    		}
+		      		
       	}
       },
 			registerButton() {
