@@ -1,6 +1,6 @@
 <template>
 	<div class="product-container">
-		<home-top></home-top>
+		<home-top @doSearch="searchList"></home-top>
 		<div class="classify-main-box" v-for="(item, index) in this.listQuery" :value="item.value" :key="index">
 			<div class="fontClass">
 				<img src="@/icons/img/圆.png" style="width: 20px; height: 20px;" />
@@ -130,7 +130,6 @@
 				getGoodsList()
 				 .then(response => {
 				 		this.listQuery = response.data
-				 	console.log(this.listQuery,11)
 				 		for(const i in this.listQuery) {
 				 			this.listQuery[i].type = this.doType(this.listQuery[i].type)
 				 		}
@@ -201,6 +200,12 @@
 				 			type: 'success'
 				 		})
 				 })
+			},
+			searchList(params) {
+				this.listQuery = params
+				for(const i in this.listQuery) {
+		 			this.listQuery[i].type = this.doType(this.listQuery[i].type)
+		 		}
 			}
 		}
 	}

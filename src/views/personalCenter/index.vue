@@ -154,6 +154,7 @@
         codeFlag: true,
         timeBack: '',
         timer: null,
+        userId: 0,
 				formData: {
 					headPortrait: '',
 					nickName: '',
@@ -413,13 +414,13 @@
 		components: {
 			copyright
 		},
-    mounted() {
+    created() {
       this.getList()
     },
     // 监听密码的变化
     watch: {
       'formData.password': function(value){
-        this.safety
+        this.isSafety()
       }
     },
 		methods: {
@@ -456,13 +457,12 @@
       },
       // 判断nickName是否唯一
       nickNameExit() {
-        if (this.formData.nickName === '' || this.formData.nickName.replace(/\s/g,"") === '') {
+        if (this.formData.nickName === '') {
           this.loginTip = '昵称不能为空'
         } else {
-          let username = this.formData.nickName
-          getList(username)
+          getList(this.formData.nickName)
            .then(response => {
-            if (response.data.length > 1) {
+            if (response.data.length > 0) {
               this.loginTip = '昵称已存在,请重新输入'
             } else {
               this.loginTip = ''
@@ -537,41 +537,51 @@
       // 保存修改
       doSave() {
         this.$refs.ruleForm.validate((valid) => {
-          if (valid) {
+          if (valid && this.loginTip === '') {
             this.$confirm('确认保存？', '提示', {
               confirmButtonText: '确定',
               cancelButtonText: '取消',
               type: 'warning'
             }).then(() => {
-              if (!this.dialogImageUrl) {
-                this.formData.headPortrait = ''
-              } else {
-                this.formData.headPortrait = this.dialogImageUrl
-              }
-              const userInfo = {
-                headPortrait: this.formData.headPortrait,
-                username: sessionStorage.getItem('username'),
-                nickName: this.formData.nickName,
-                birthday: this.formData.birthday,
-                // shippingAddress: this.formData.shippingAddress,
-                detailAddress: this.formData.detailAddress,
-                password: this.formData.password,
-                phoneNumber: this.formData.phoneNumber
-              }
-              editList(userInfo)
+              // if (!this.dialogImageUrl) {
+              //   this.formData.headPortrait = ''
+              // } else {
+              //   this.formData.headPortrait = this.dialogImageUrl
+              // }
+              getList(sessionStorage.getItem('username'))
                .then(response => {
-                  if (response.data.status === 200) {
-                    this.$message({
-                      message: '修改成功',
-                      type: 'success'
-                    })
-                  } else {
-                    this.$message({
-                      message: '修改失败, 请重新输入',
-                      type: 'warning'
-                    })
+                  for(const i in response.data) {
+                    this.userId = response.data[i].id
+                    const userInfo = {
+                      headPortrait: this.formData.headPortrait,
+                      username: this.formData.nickName,
+                      nickName: this.formData.nickName,
+                      birthday: this.formData.birthday,
+                      // shippingAddress: this.formData.shippingAddress,
+                      detailAddress: this.formData.detailAddress,
+                      phoneNumber: this.formData.phoneNumber,
+                      password: this.formData.password,
+                      userId: this.userId
+                    }
+                    editList(userInfo)
+                     .then(response => {
+                        if (response.status === 200) {
+                          sessionStorage.setItem('username', this.formData.nickName)
+                          sessionStorage.setItem('phoneNumber', this.formData.phoneNumber)
+                          this.$message({
+                            message: '修改成功',
+                            type: 'success'
+                          })
+                        } else {
+                          this.$message({
+                            message: '修改失败, 请重新输入',
+                            type: 'warning'
+                          })
+                        }
+                     }).catch(() => { })
                   }
-               })
+                })
+                .catch(() => { })
             }).catch(() => { })
           } else {
             return false

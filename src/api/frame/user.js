@@ -21,8 +21,9 @@ export function editList(params) {
       'birthday': params.birthday,
       // 'shippingAddress': params.shippingAddress,
       'detailAddress': params.detailAddress,
+      'phoneNumber': params.phoneNumber,
       'password': params.password,
-      'phoneNumber': params.phoneNumber
+      'id': params.userId
     }
 	})
 }

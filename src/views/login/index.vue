@@ -59,7 +59,7 @@
 									</el-col>
 									<el-col :span="22">
 										<el-form-item label="动态码" prop="dynamicCode">
-											<el-input v-model="formData2.dynamicCode" placeholder="动态码" @keyup.enter.native="loginButton">
+											<el-input v-model="formData2.dynamicCode" placeholder="动态码" @keyup.enter.native="loginButton" @blur="handlercodeBlur">
 												<i slot="prefix" class="el-icon-first-iconcode"></i>
 												<el-button v-if="codeFlag" slot="append" size="mini" style="font-size: 5px; width: 95px;" @click="getCode">获取动态码</el-button>
 												<el-button v-else slot="append" size="mini" style="font-size: 5px; width: 95px;">{{this.timeBack}}秒后重发</el-button>
@@ -90,7 +90,7 @@
 									</el-col>
 									<el-col :span="22">
 										<el-form-item label="动态码" prop="reDynamicCode">
-											<el-input v-model="formData3.reDynamicCode" placeholder="动态码">
+											<el-input v-model="formData3.reDynamicCode" placeholder="动态码" @blur="handlercodeBlur">
 												<i slot="prefix" class="el-icon-first-iconcode"></i>
 											</el-input>
 										</el-form-item>
@@ -284,11 +284,11 @@
     			let phoneNumber = this.formData2.phoneNumber
 					loginByNumber(phoneNumber)
 					 .then(response => {
-						sessionStorage.setItem('myToken', response.data.token)
-						this.$store.dispatch('Login', response.data)
 						if (response.data.status === 400) {
 							this.loginTip2 = '不存在此账户，请重新输入'
 						} else {
+							sessionStorage.setItem('myToken', response.data.token)
+							this.$store.dispatch('Login', response.data)
 							this.loginTip2 = ''
 						}
 					}).catch(() => {})
@@ -311,7 +311,7 @@
 					}).catch(() => {})
     		}
       },
-      // 获取手机动态码 60秒倒计时
+      // 获取手机动态码 60秒倒计时 并发送手机短信验证码
       getCode(){ 
       	if (this.formData2.phoneNumber === '') {
       		this.loginTip2 = '请输入手机号'
@@ -330,28 +330,47 @@
 		      		}
 		      	}, 1000)
 	      	}
-	      	let code = Math.floor(Math.random() * 1000000)
 	      	if (this.type === 'use') {
-	      		this.sendCode(this.formData2.phoneNumber, code)
+	      		// this.sendCode(this.formData2.phoneNumber, '0')
 	      	} else {
-	      		this.sendCode(this.formData3.rePhoneNum, code)
+	      		// this.sendCode(this.formData3.rePhoneNum, '0')
 	      	}
       	}
       },
       // 发送短信验证码
-      sendCode(tel, code) {
-      	const text='验证码：'+ code +',您正在使用登陆功能,该验证码仅用于身份验证,在五分钟之内有效，请勿泄露给其他人使用。' //短信内容模板，已经在sms平台绑定此内容，所以会比普通的更快到达用户手机。
-		    let params = new URLSearchParams()
-		    params.append('Uid','Daisy')
-		    params.append('Key','d41d8cd98f00b204e980')
-		    params.append('smsMob',tel)
-		    params.append('smsText',text)
-		    console.log(params, 444444)
-		    this.$axios.post('http://utf8.api.smschinese.cn/', params, { //post请求，在请求时会自动把params拼接再URLSearchParams后面
-		        headers:{ 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8' }, //必须要加头
-		     }).then(function (response) {
-		       console.log(response, 6666666)}
-		     )
+      // sendCode(tel, code) {
+      // 	const text='验证码：'+ code +',您正在使用登陆功能,该验证码仅用于身份验证,在五分钟之内有效，请勿泄露给其他人使用。' //短信内容模板，已经在sms平台绑定此内容，所以会比普通的更快到达用户手机。
+		    // let params = new URLSearchParams()
+		    // params.append('Uid','Daisy')
+		    // params.append('Key','d41d8cd98f00b204e980')
+		    // params.append('smsMob',tel)
+		    // params.append('smsText',text)
+		    // console.log(params, 444444)
+		    // this.$axios.post('http://utf8.api.smschinese.cn/', params, { //post请求，在请求时会自动把params拼接再URLSearchParams后面
+		    //     headers:{ 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8' }, //必须要加头
+		    //  }).then(function (response) {
+		    //    console.log(response, 6666666)}
+		    //  )
+      // },
+      // 发送短信验证码
+      sendCode(tel, messageType) {
+		    this.$axios.post('http://www.nobitastudio.cn/lanqiaoPro1/useGetMessageVerificationCode.action', {'phoneNumber': tel, 'messageType': messageType}, function(message) {
+		    	console.log(message.inf,111)
+		    })
+      },
+      // 验证码框失焦 
+      handlercodeBlur() {
+      	if (this.type === 'use') {
+	      		// this.isCodeFlag(this.formData2.phoneNumber, this.formData2.dynamicCode)
+	      	} else {
+	      		// this.isCodeFlag(this.formData3.rePhoneNum, this.formData3.reDynamicCode)
+	      	}
+      },
+      // 判断验证码是否正确
+      isCodeFlag(tel, code) {
+      	this.$axios.post('http://www.nobitastudio.cn/lanqiaoPro1/userConfirmVerificationCode.action', {'phoneNumber': tel, 'verificationCode': code}, function(message) {
+      		console.log(message,222)
+      	})
       },
       // 生成随机四位由数字和英文组成的验证码
       generatedCode() {
@@ -377,7 +396,7 @@
       loginButton() {
       	if (this.activeNum === 'first') {
       		this.$refs.ruleForm.validate(valid => {
-						if (valid) {
+						if (valid && this.loginTip === '') {
 							const userInfo = {
 								username: this.formData1.username,
 								phoneNumber: this.formData1.username,
@@ -385,16 +404,20 @@
 							}
 							loginByUsername(userInfo)
 							 .then(response => {
-								sessionStorage.setItem('myToken', response.data.token)
-								this.$store.dispatch('Login', response.data)
 								if (response.data.status === 200) {
+									sessionStorage.setItem('myToken', response.data.token)
+									this.$store.dispatch('Login', response.data)
 									this.$router.push({
 										name: 'layout'
 									})
 								} else if (response.data.status === 400) {
 									this.loginTip = '账号或密码错误, 请重新输入'
+									this.generatedCode()
 								}
 							}).catch(() => { })
+						} else {
+							this.loginTip = '账号或密码错误, 请重新输入'
+							this.generatedCode()
 						}
 					})
       	} else {
@@ -406,15 +429,15 @@
 	    			let phoneNumber = this.formData2.phoneNumber
 						loginByNumber(phoneNumber)
 						 .then(response => {
-							sessionStorage.setItem('myToken', response.data.token)
-							this.$store.dispatch('Login', response.data)
-							if (response.data.status === 400) {
+							if (response.status === 400) {
 								this.loginTip2 = '不存在此账户，请重新输入'
 							} else {
 								this.loginTip2 = ''
 								this.$refs.ruleForm2.validate(valid => {
 									if (valid) {
 										if (this.formData2.dynamicCode) { // 验证码正确
+											sessionStorage.setItem('myToken', response.data.token)
+											this.$store.dispatch('Login', response.data)
 											this.$router.push({
 												name: 'layout'
 											})

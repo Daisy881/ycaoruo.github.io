@@ -29,8 +29,8 @@
 				<img src="../../icons/img/图标.png" style="width: 210px; height: 100px;">
 			</div>
 			<div class="search">
-				<el-input placeholder="请输入搜索内容"></el-input>
-				<div class="serchButton">搜索</div>
+				<el-input v-model="searchThings" placeholder="请输入商家名或商品名" @keyup.enter.native="doSearch"></el-input>
+				<div class="serchButton" @click="doSearch">搜索</div>
 			</div>
 		</div>
 		
@@ -41,10 +41,13 @@
 
 <script>
 	import shoppingCar from '@/views/shoppingCar/index'
+	import { searchShops, searchGoods, searchMhu } from '@/api/frame/search'
 	export default {
 		name: 'homeTop',
 		data(){
 			return {
+				type: '',
+				searchThings: '',
 				asideVisible: false,
 				state: 0,
 				user: '',
@@ -155,9 +158,14 @@
 			shoppingCar
 		},
 		mounted() {
+			this.type = this.$route.query.type
 			if (sessionStorage.getItem('myToken') !== null) { // token不为空 用户已登录
 				this.state = 1
-				this.user = sessionStorage.getItem('username')
+				if (sessionStorage.getItem('username')) {
+					this.user = sessionStorage.getItem('username')
+				} else {
+					this.user = sessionStorage.getItem('phoneNumber')
+				}
 			} else {
 				this.state = 0
 			}
@@ -265,6 +273,61 @@
 				this.showDistrict = false
 				this.showProvince = true
 				this.addressVisible = false
+			},
+			// 搜索
+			doSearch() {
+				if (this.type === 'one') { // 商家搜索
+					searchShops(this.searchThings)
+					 .then(response => {
+						 	if (response.data.status === 401) {
+						 		this.$message({
+						 			message: '未找到与搜索内容相关的商家，请重新查询！',
+						 			type: 'warning'
+						 		})
+						 	} else if (response.data.status === 400) {
+						 		this.$message({
+						 			message: '查询失败！',
+						 			type: 'warning'
+						 		})
+						 	} else {
+						 		this.$emit('doSearch', response.data)
+						 	}
+					 }) .catch(() => { })
+				} else if (this.type === 'two') { // 商品搜索
+					searchGoods(this.searchThings)
+					 .then(response => {
+						 	if (response.data.status === 401) {
+						 		this.$message({
+						 			message: '未找到与搜索内容相关的商品，请重新查询！',
+						 			type: 'warning'
+						 		})
+						 	} else if (response.data.status === 400) {
+						 		this.$message({
+						 			message: '查询失败！',
+						 			type: 'warning'
+						 		})
+						 	} else {
+						 		this.$emit('doSearch', response.data)
+						 	}
+					 }) .catch(() => { })
+				} else { // 模糊搜索
+					searchMhu(this.searchThings)
+					 .then(response => {
+						 	if (response.data.status === 401) {
+						 		this.$message({
+						 			message: '未找到与搜索内容相关的商品或商家，请重新查询！',
+						 			type: 'warning'
+						 		})
+						 	} else if (response.data.status === 400) {
+						 		this.$message({
+						 			message: '查询失败！',
+						 			type: 'warning'
+						 		})
+						 	} else {
+						 		this.$emit('doSearch', response.data)
+						 	}
+					 }) .catch(() => { })
+				}
 			}
 		}
 	}

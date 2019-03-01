@@ -7,9 +7,9 @@
 			<el-header style="padding: 0px;">
 				<div class="searchBox">
 					<div class="search">
-						<el-input placeholder="搜索商家或地点"></el-input>
-						<div class="serchButton" style="position: absolute; top: 21px; left: 625px;">搜索</div>
-						<div style="font-size: 10px; ">如：<span style="color: #66B0FF;">肯德基&nbsp;&nbsp;&nbsp;&nbsp;北京</span></div>
+						<el-input v-model="searchThings" placeholder="请输入商家名或商品名"></el-input>
+						<div class="serchButton" style="position: absolute; top: 21px; left: 625px;" @click="doSearch">搜索</div>
+						<!-- <div style="font-size: 10px; ">如：<span style="color: #66B0FF;">肯德基&nbsp;&nbsp;&nbsp;&nbsp;北京</span></div> -->
 					</div>
 				</div>
 			</el-header>
@@ -43,7 +43,8 @@
 		name: 'orderManagement',
 		data() {
 			return {
-				id: 0
+				id: 0,
+				searchThings: ''
 			}
 		},
 		components: {
@@ -58,6 +59,9 @@
 				this.$router.push({
 					name: 'layout'
 				})
+			},
+			doSearch() {
+				
 			},
 			allOrder() {
 				this.changeID(1)
