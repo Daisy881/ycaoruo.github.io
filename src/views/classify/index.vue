@@ -1,7 +1,9 @@
 <template>
 	<div class="product-container">
 		<home-top @doSearch="searchList"></home-top>
-		<div class="classify-main-box" v-for="(item, index) in this.listQuery" :value="item.value" :key="index">
+		<div v-if="goodsFlag" class="noShopsGoods">对不起，该类商品暂无存货！</div>
+		<div v-else-if="shopsFlag" class="noShopsGoods">对不起，暂无该类商家！</div>
+		<div v-else class="classify-main-box" v-for="(item, index) in this.listQuery" :value="item.value" :key="index">
 			<div class="fontClass">
 				<img src="@/icons/img/圆.png" style="width: 20px; height: 20px;" />
 				<div style="width: 100px; position: relative; top: -33px; left: 50px;">{{item.type}}</div>
@@ -48,6 +50,8 @@
 				exquisiteData: [],
 				goodEvaluateData: [],
 				dialogVisible: false,
+				goodsFlag: false,
+				shopsFlag: false,
 				type: '',
 				id: '',
 				titleName:'',
@@ -112,7 +116,7 @@
 			product,
 			merchant
 		},
-		created() {
+		mounted() {
 			this.type = this.$route.query.type
 			this.id = this.$route.query.id
 			if (this.type === 'one') {
@@ -129,21 +133,34 @@
 			getGoodsList() {
 				getGoodsList()
 				 .then(response => {
-				 		this.listQuery = response.data
-				 		for(const i in this.listQuery) {
-				 			this.listQuery[i].type = this.doType(this.listQuery[i].type)
-				 		}
+				 		this.shopsGoodsType(response.data)
 				 })
+				 .catch(() => { })
 			},
 			// 店铺初始化
 			getShopsList() {
 				getShopsList()
 				 .then(response => {
-				 		this.listQuery = response.data
-				 		for(const i in this.listQuery) {
-				 			this.listQuery[i].type = this.doType(this.listQuery[i].type)
-				 		}
+				 		this.shopsGoodsType(response.data)
 				 })
+			},
+			// 商品或商家的类型
+			shopsGoodsType(params) {
+				let arrList = []
+		 		for (const i in params) {
+		 			if (params[i].belongsGoods === this.id || params[i].shopsType === this.id) {
+		 				arrList.push(params[i])
+		 			}
+		 		}
+		 		this.listQuery = arrList
+		 		if (this.type === 'one') {
+		 			this.listQuery.length===0 ? this.shopsFlag=true : this.shopsFlag=false
+		 		} else {
+		 			this.listQuery.length===0 ? this.goodsFlag=true : this.goodsFlag=false
+		 		}
+		 		for(const i in this.listQuery) {
+		 			this.listQuery[i].type = this.doType(this.listQuery[i].type)
+		 		}
 			},
 			// 判断中间三个标题的类型
 			doType(params) {

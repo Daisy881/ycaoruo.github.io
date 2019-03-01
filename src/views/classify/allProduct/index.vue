@@ -108,17 +108,6 @@
 			},
 			searchList(params) {
 				this.listQuery = params
-				// this.getList()
-				// console.log(params,this.listQuery, 555)
-				// let arrList = []
-				// for (const i in params) {
-				// 	for (const j in this.listQuery) {
-				// 		if (params[i].goodsName === this.listQuery[j].goodsName || params[i].shopsName === this.listQuery[j].shopsName) {
-				// 			arrList.push(this.listQuery[j])
-				// 		}
-				// 	}
-				// }
-				// this.listQuery = arrList
 			}
 		}
 	}
