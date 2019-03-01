@@ -65,6 +65,7 @@
 				 		this.getList()
 				 })
 			},
+			// 计算总价
 			calTotalPrice() {
 				this.totalPrice = 0
 				for(const i in this.listQuery) {

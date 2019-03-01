@@ -1,7 +1,8 @@
 <template>
 	<div class="allProduct">
 		<home-top @doSearch="searchList"></home-top>
-		<div class="allPhoto">
+		<div @click="goHome" class="goHome"><<<返回首页</div>
+		<div class="allPhoto" style="margin-top: 60px;">
 			<ul v-for="(item, index) in this.listQuery" :value="item.value" :key="index">
 				<li>
 					<img :src="item.url" style="width: 300px; height: 350px;" @click="doProduct(item)"/>
@@ -23,6 +24,7 @@
 <script>
 	import { addGoods } from '@/api/frame/shoppingCar'
 	import { getGoodsList } from '@/api/frame/goods'
+	import { searchMhu } from '@/api/frame/search'
 	import homeTop from '@/views/homeTop/index'
 	import copyright from '@/views/copyright/index'
 	import product from '@/views/classify/product/index'
@@ -32,6 +34,8 @@
 			return {
 				goodsObj: null,
 				listQuery: [],
+				type: '',
+				searchThings: '',
 				imgUrl: [{
 					url: require('@/icons/img/goods/1.jpg'),
 					value: '1'
@@ -71,8 +75,13 @@
 			copyright,
 			product
 		},
-		mounted() {
+		created() {
 			this.getList()
+			this.type = this.$route.query.type
+			this.searchThings = this.$route.query.things
+			if (this.type === 'alls') {
+				this.allsSearch(this.searchThings)
+			}
 		},
 		methods: {
 			// 初始化
@@ -81,6 +90,11 @@
 				 .then(response => {
 				 		this.listQuery = response.data
 				 })
+			},
+			goHome() {
+				this.$router.push({
+					name: 'layout'
+				})
 			},
 			doProduct(params) {
 				this.goodsObj = params
@@ -108,6 +122,24 @@
 			},
 			searchList(params) {
 				this.listQuery = params
+			},
+			allsSearch(params) {
+				searchMhu(params)
+				 .then(response => {
+					 	if (response.data.status === 401) {
+					 		this.$message({
+					 			message: '未找到与搜索内容相关的商品或商家，请重新查询！',
+					 			type: 'warning'
+					 		})
+					 	} else if (response.data.status === 400) {
+					 		this.$message({
+					 			message: '查询失败！',
+					 			type: 'warning'
+					 		})
+					 	} else {
+					 		this.searchList(response.data)
+					 	}
+				 }) .catch(() => { })
 			}
 		}
 	}
@@ -122,5 +154,8 @@
 	}
 	.allPhoto {
 		height: 2000px;
+	}
+	.goHome {
+		left: 40px;
 	}
 </style>

@@ -53,7 +53,7 @@
 				goodsFlag: false,
 				shopsFlag: false,
 				type: '',
-				id: '',
+				id: 0,
 				titleName:'',
 				listQuery: [],
 				goodsObj: null,
@@ -116,7 +116,7 @@
 			product,
 			merchant
 		},
-		mounted() {
+		created() {
 			this.type = this.$route.query.type
 			this.id = this.$route.query.id
 			if (this.type === 'one') {
@@ -126,14 +126,20 @@
 				this.titleName = 'goods'
 				this.getGoodsList()
 			}
-			this.getGoods()
 		},
 		methods: {
 			// 商品初始化
 			getGoodsList() {
 				getGoodsList()
 				 .then(response => {
-				 		this.shopsGoodsType(response.data)
+				 		if (response.status === 400) {
+				 			this.$message({
+				 				message: '对不起，查询失败！',
+				 				type: 'warning'
+				 			})
+				 		} else {
+				 			this.shopsGoodsType(response.data)
+				 		}
 				 })
 				 .catch(() => { })
 			},
@@ -141,14 +147,21 @@
 			getShopsList() {
 				getShopsList()
 				 .then(response => {
-				 		this.shopsGoodsType(response.data)
-				 })
+				 		if (response.status === 400) {
+				 			this.$message({
+				 				message: '对不起，查询失败！',
+				 				type: 'warning'
+				 			})
+				 		} else {
+				 			this.shopsGoodsType(response.data)
+				 		}
+				 }).catch(() => { })
 			},
 			// 商品或商家的类型
 			shopsGoodsType(params) {
 				let arrList = []
 		 		for (const i in params) {
-		 			if (params[i].belongsGoods === this.id || params[i].shopsType === this.id) {
+		 			if (params[i].belongsGoods === parseInt(this.id) || params[i].shopsType === parseInt(this.id)) {
 		 				arrList.push(params[i])
 		 			}
 		 		}
@@ -188,41 +201,51 @@
 				})
 			},
 			getGoods() {
-				// 获取购物车中的商品
-				getList(sessionStorage.getItem('username'))
-				 .then(response => {
-						this.arr = response.data
-				 }).catch(() => { 
-				 		return false
-				 })
+				
 			},
 			// 加入购物车
-			intoCar(params) {
-				this.$nextTick(function() {
-					console.log(this.arr,11)
-				})
-				this.getGoods()
-				const goodsInfo = {
-					shopName: params.shopName,
-					username: sessionStorage.getItem('username'),
-					picAddress: params.picAddress,
-					goodsName: params.goodsName,
-					price: params.price,
-					count: 1
-				}
-				addGoods(goodsInfo)
-				 .then(response => {
-				 		this.$message({
-				 			message: '加入购物车成功',
-				 			type: 'success'
-				 		})
-				 })
+			intoCar(params) { // 获取购物车中的商品
+				// getList(sessionStorage.getItem('username'))
+				//  .then(response => {
+				// 		this.arr = response.data
+				// 		let paramsArr = Object.keys(params)
+				// 		for (const i in this.arr) { // 判断购物车中的商品和点击的商品是否一样 一样则数量加一
+				// 			let objArr = Object.keys(this.arr[i])
+				// 			for(const j in objArr) {
+				// 				for(const k in paramsArr) {
+				// 					if(objArr[j] !== paramsArr[k]) {
+				// 						console.log("加入购物车")
+				// 						return false
+				// 					}
+				// 				}
+				// 			}
+				// 		}
+						const goodsInfo = {
+							shopName: params.shopName,
+							username: sessionStorage.getItem('username'),
+							picAddress: params.picAddress,
+							goodsName: params.goodsName,
+							price: params.price,
+							count: 1
+						}
+						// addGoods(goodsInfo)
+						//  .then(response => {
+						//  		this.$message({
+						//  			message: '加入购物车成功',
+						//  			type: 'success'
+						//  		})
+						//  })
+						//  .catch(() => { })
+				 // }).catch(() => {
+				 // 		return false
+				 // })
 			},
 			searchList(params) {
 				this.listQuery = params
 				for(const i in this.listQuery) {
 		 			this.listQuery[i].type = this.doType(this.listQuery[i].type)
 		 		}
+		 		this.shopsGoodsType(this.listQuery)
 			}
 		}
 	}

@@ -29,8 +29,8 @@
 				<img src="../../icons/img/图标.png" style="width: 210px; height: 100px;">
 			</div>
 			<div class="search">
-				<el-input v-model="searchThings" placeholder="请输入商家名或商品名" @keyup.enter.native="doSearch"></el-input>
-				<div class="serchButton" @click="doSearch">搜索</div>
+				<el-input v-model="searchThings" placeholder="请输入商家名或商品名" @keyup.enter.native="doSearchType"></el-input>
+				<div class="serchButton" @click="doSearchType">搜索</div>
 			</div>
 		</div>
 		
@@ -159,6 +159,9 @@
 		},
 		mounted() {
 			this.type = this.$route.query.type
+			if (this.type === 'alls') {
+				this.searchThings = this.$route.query.things
+			}
 			if (sessionStorage.getItem('myToken') !== null) { // token不为空 用户已登录
 				this.state = 1
 				if (sessionStorage.getItem('username')) {
@@ -170,6 +173,18 @@
 				this.state = 0
 			}
 		},
+		// watch: {
+		// 	searchThings(val, oldVal) {
+		// 		if (this.type === 'alls') {
+		// 			this.$router.push({
+		// 				query: {
+		// 					things: val
+		// 				}
+		// 			})
+		// 			// this.doSearchType()
+		// 		}
+		// 	}
+		// },
 		methods: {
 			getShadow(e){
 				e.stopPropagation()
@@ -275,7 +290,7 @@
 				this.addressVisible = false
 			},
 			// 搜索
-			doSearch() {
+			doSearchType() {
 				if (this.type === 'one') { // 商家搜索
 					searchShops(this.searchThings)
 					 .then(response => {
@@ -310,7 +325,14 @@
 						 		this.$emit('doSearch', response.data)
 						 	}
 					 }) .catch(() => { })
-				} else { // 模糊搜索
+				} else if (this.type === 'all' || this.type === 'alls') { // 全部商品页的模糊搜索
+					if (this.type === 'alls') {
+						this.$router.push({
+							query: {
+								things: this.searchThings
+							}
+						})
+					}
 					searchMhu(this.searchThings)
 					 .then(response => {
 						 	if (response.data.status === 401) {
@@ -327,6 +349,14 @@
 						 		this.$emit('doSearch', response.data)
 						 	}
 					 }) .catch(() => { })
+				} else { // 首页的模糊搜索
+					this.$router.push({
+						name: 'allProduct',
+						query: {
+							type: 'alls',
+							things: this.searchThings
+						}
+					})
 				}
 			}
 		}

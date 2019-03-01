@@ -94,7 +94,10 @@
 		methods: {
 			allProduct() {
 				this.$router.push({
-					name: 'allProduct'
+					name: 'allProduct',
+		 			query: {
+		 				type: 'all'
+		 			}
 				})
 			},
 			doGroupPurchase(){
