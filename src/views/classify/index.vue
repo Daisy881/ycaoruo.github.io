@@ -1,6 +1,6 @@
 <template>
 	<div class="product-container">
-		<home-top @doSearch="searchList"></home-top>
+		<home-top @doSearch="searchList" @setCount="getCount"></home-top>
 		<div v-if="goodsFlag" class="noShopsGoods">对不起，该类商品暂无存货！</div>
 		<div v-else-if="shopsFlag" class="noShopsGoods">对不起，暂无该类商家！</div>
 		<div v-else class="classify-main-box" v-for="(item, index) in this.listQuery" :value="item.value" :key="index">
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-	import { getList, addGoods } from '@/api/frame/shoppingCar'
+	import { getList, editGoodsCount, addGoods } from '@/api/frame/shoppingCar'
 	import { getGoodsList } from '@/api/frame/goods'
 	import { getShopsList } from '@/api/frame/shops'
 	import homeTop from '@/views/homeTop/index'
@@ -56,6 +56,7 @@
 				id: 0,
 				titleName:'',
 				listQuery: [],
+				count: 1,
 				goodsObj: null,
 				shopsObj: null,
 				arr: [],
@@ -185,6 +186,9 @@
 					return '好评不断'
 				}
 			},
+			getCount(params) {
+				this.count = params
+			},
 			handleDetails(params) {
 				this.goodsObj = params
 				this.shopsObj = params
@@ -205,40 +209,60 @@
 			},
 			// 加入购物车
 			intoCar(params) { // 获取购物车中的商品
-				// getList(sessionStorage.getItem('username'))
-				//  .then(response => {
-				// 		this.arr = response.data
-				// 		let paramsArr = Object.keys(params)
-				// 		for (const i in this.arr) { // 判断购物车中的商品和点击的商品是否一样 一样则数量加一
-				// 			let objArr = Object.keys(this.arr[i])
-				// 			for(const j in objArr) {
-				// 				for(const k in paramsArr) {
-				// 					if(objArr[j] !== paramsArr[k]) {
-				// 						console.log("加入购物车")
-				// 						return false
-				// 					}
-				// 				}
-				// 			}
-				// 		}
-						const goodsInfo = {
-							shopName: params.shopName,
-							username: sessionStorage.getItem('username'),
-							picAddress: params.picAddress,
-							goodsName: params.goodsName,
-							price: params.price,
-							count: 1
+				getList(sessionStorage.getItem('username'))
+				 .then(response => {
+						this.arr = response.data
+						if (this.arr.length === 0) {
+							this.addAllGoods(params)
+						} else {
+							// 判断购物车中的商品和点击的商品是否一样 一样则数量加一 不一样则直接加入
+							for (const i in this.arr) { // 购物车中的商品
+								this.count = this.arr[i].shops_count
+								if(this.arr[i].shops_goodsName === params.goodsName &&
+									this.arr[i].shops_Name === params.shopsName &&
+									this.arr[i].shops_price === params.price) { // 商品名字 商家名字 价格  一样
+									const paramsInfo = {
+										count: this.count + 1,
+										id: this.arr[i].id
+									}
+									editGoodsCount(paramsInfo)
+									 .then(response => {
+									 		this.$message({
+									 			message: '加入购物车成功',
+									 			type: 'success'
+									 		})
+									 		this.count = paramsInfo.count
+									 })
+									 .catch(() => { })
+								 		return false
+								} else { // 不一样
+									if (this.arr[i] === this.arr[this.arr.length-1]) {
+										this.addAllGoods(params)
+									}
+								}
+							}
 						}
-						// addGoods(goodsInfo)
-						//  .then(response => {
-						//  		this.$message({
-						//  			message: '加入购物车成功',
-						//  			type: 'success'
-						//  		})
-						//  })
-						//  .catch(() => { })
-				 // }).catch(() => {
-				 // 		return false
-				 // })
+				 }).catch(() => {
+				 		return false
+				 })
+			},
+			addAllGoods(params) {
+				const goodsInfo = {
+					shopName: params.shopsName,
+					username: sessionStorage.getItem('username'),
+					picAddress: params.picAddress,
+					goodsName: params.goodsName,
+					price: params.price,
+					count: 1
+				}
+				addGoods(goodsInfo)
+				 .then(response => {
+				 		this.$message({
+				 			message: '加入购物车成功',
+				 			type: 'success'
+				 		})
+				 })
+				 .catch(() => { })
 			},
 			searchList(params) {
 				this.listQuery = params

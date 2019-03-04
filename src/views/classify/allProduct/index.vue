@@ -22,7 +22,7 @@
 </template>
 
 <script>
-	import { addGoods } from '@/api/frame/shoppingCar'
+	import { getList, editGoodsCount, addGoods } from '@/api/frame/shoppingCar'
 	import { getGoodsList } from '@/api/frame/goods'
 	import { searchMhu } from '@/api/frame/search'
 	import homeTop from '@/views/homeTop/index'
@@ -103,9 +103,48 @@
 			closeDialog() {
 				this.dialogVisible = false
 			},
-			intoCar(params) {
+			// 加入购物车
+			intoCar(params) { // 获取购物车中的商品
+				getList(sessionStorage.getItem('username'))
+				 .then(response => {
+						this.arr = response.data
+						if (this.arr.length === 0) {
+							this.addAllGoods(params)
+						} else {
+							// 判断购物车中的商品和点击的商品是否一样 一样则数量加一 不一样则直接加入
+							for (const i in this.arr) { // 购物车中的商品
+								this.count = this.arr[i].shops_count
+								if(this.arr[i].shops_goodsName === params.goodsName &&
+									this.arr[i].shops_Name === params.shopsName &&
+									this.arr[i].shops_price === params.price) { // 商品名字 商家名字 价格  一样
+									const paramsInfo = {
+										count: this.count + 1,
+										id: this.arr[i].id
+									}
+									editGoodsCount(paramsInfo)
+									 .then(response => {
+									 		this.$message({
+									 			message: '加入购物车成功',
+									 			type: 'success'
+									 		})
+									 		this.count = paramsInfo.count
+									 })
+									 .catch(() => { })
+								 		return false
+								} else { // 不一样
+									if (this.arr[i] === this.arr[this.arr.length-1]) {
+										this.addAllGoods(params)
+									}
+								}
+							}
+						}
+				 }).catch(() => {
+				 		return false
+				 })
+			},
+			addAllGoods(params) {
 				const goodsInfo = {
-					shopName: params.shopName,
+					shopName: params.shopsName,
 					username: sessionStorage.getItem('username'),
 					picAddress: params.picAddress,
 					goodsName: params.goodsName,
@@ -119,6 +158,7 @@
 				 			type: 'success'
 				 		})
 				 })
+				 .catch(() => { })
 			},
 			searchList(params) {
 				this.listQuery = params

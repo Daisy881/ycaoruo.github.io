@@ -18,6 +18,7 @@ var sqlMap = {
     getShoppingCar: 'select * from shops_car where shops_userName = ?',
     addShoppingCar: `insert into shops_car (shops_Name, shops_userName, shops_picAddress, shops_goodsName, shops_price, shops_count) 
                     values (?, ?, ?, ?, ?, ?)`,
+    editShoppingCarCount: 'update shops_car set shops_count = ? where id = ?', 
     delShoppingCar: 'delete from shops_car where id = ?'
   },
   //商品信息

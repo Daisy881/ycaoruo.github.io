@@ -35,7 +35,7 @@
 		</div>
 		
 		<!--购物车组件-->
-		<shopping-car v-if="asideVisible"></shopping-car>
+		<shopping-car v-if="asideVisible" @setCountToHomeTop="setCountToPage"></shopping-car>
 	</div>
 </template>
 
@@ -154,6 +154,7 @@
         ]
 			}
 		},
+		props: ['afterCount'],
 		components: {
 			shoppingCar
 		},
@@ -358,6 +359,9 @@
 						}
 					})
 				}
+			},
+			setCountToPage(params) {
+				this.$emit('setCount', params)
 			}
 		}
 	}

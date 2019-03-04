@@ -25,6 +25,17 @@ export function addGoods(params) {
 	})
 }
 
+export function editGoodsCount(params) {
+	return request({
+		method: 'post',
+		url: '/api/shoppingCar/editShoppingCarCount',
+		data: {
+			'count': params.count,
+			'id': params.id
+		}
+	})
+}
+
 export function delGoods(id) {
 	return request({
 		method: 'post',

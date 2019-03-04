@@ -11,6 +11,7 @@ router.post('/getShoppingCar', (req, res) => {
 		if (err) {
 			res.json({message: '查询失败', status: 400})
 		} else {
+			console.log(rows)
 			res.json(rows)
 		}
 	})
@@ -22,10 +23,23 @@ router.post('/addShoppingCar', (req, res) => {
 	let params = req.body
 	connection.conn.query(sql, [params.shopName, params.username, params.picAddress, params.goodsName, params.price, params.count], function(err, rows, fields) {
 		if (err) {
-			console.log(err)
 			res.json({message: '添加失败', status: 400})
 		} else {
 			res.json({message: '添加成功', status: 200})
+		}
+	})
+})
+
+// 修改商品数量
+router.post('/editShoppingCarCount', (req, res) => {
+	const sql = $sql.shoppingCar.editShoppingCarCount
+	let params = req.body
+	connection.conn.query(sql, [params.count, params.id], function(err, rows, fields) {
+		if (err) {
+			console.log(err)
+			res.json({message: '修改失败', status: 400})
+		} else {
+			res.json({message: '修改成功', status: 200})
 		}
 	})
 })

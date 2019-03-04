@@ -21,7 +21,7 @@
 				<el-row :gutter="0">
 					<el-col :span="9" style="color: red;">￥{{item.shops_price | priceFormat}}</el-col>
 					<el-col :span="12">
-						<el-input-number size="mini" v-model="item.shops_count" :min="1" @change="calTotalPrice()"></el-input-number>
+						<el-input-number size="mini" v-model="item.shops_count" :min="1" @change="calTotalPrice(item)"></el-input-number>
 					</el-col>
 				</el-row>
 			</div>
@@ -36,7 +36,7 @@
 </template>
 
 <script>
-	import { getList, delGoods } from '@/api/frame/shoppingCar'
+	import { getList, editGoodsCount,  delGoods } from '@/api/frame/shoppingCar'
 	export default {
 		name: 'shoppingCar',
 		data(){
@@ -65,12 +65,20 @@
 				 		this.getList()
 				 })
 			},
-			// 计算总价
-			calTotalPrice() {
+			// 计算总价 并把当前数量传到页面上
+			calTotalPrice(params) {
 				this.totalPrice = 0
 				for(const i in this.listQuery) {
 					this.totalPrice += this.listQuery[i].shops_price * this.listQuery[i].shops_count
 				}
+				this.$emit('setCountToHomeTop', params.shops_count)
+				const paramsInfo = {
+					count: params.shops_count,
+					id: params.id
+				}
+				editGoodsCount(paramsInfo)
+				 .then(response => { })
+				 .catch(() => { })
 			},
 			doCount(){
 				this.$router.push({
