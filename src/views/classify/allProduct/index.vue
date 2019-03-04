@@ -1,6 +1,6 @@
 <template>
 	<div class="allProduct">
-		<home-top @doSearch="searchList"></home-top>
+		<home-top @doSearch="searchList" @setCount="getCount"></home-top>
 		<div @click="goHome" class="goHome"><<<返回首页</div>
 		<div class="allPhoto" style="margin-top: 60px;">
 			<ul v-for="(item, index) in this.listQuery" :value="item.value" :key="index">
@@ -35,6 +35,7 @@
 				goodsObj: null,
 				listQuery: [],
 				type: '',
+				count: 1,
 				searchThings: '',
 				imgUrl: [{
 					url: require('@/icons/img/goods/1.jpg'),
@@ -90,6 +91,9 @@
 				 .then(response => {
 				 		this.listQuery = response.data
 				 })
+			},
+			getCount(params) {
+				this.count = params
 			},
 			goHome() {
 				this.$router.push({
