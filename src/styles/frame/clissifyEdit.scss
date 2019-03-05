@@ -21,6 +21,17 @@
 	border-top: 1px solid #dcdfe6; 
 	margin: 10px auto;
 }
+.saleType {
+	width: 25px;
+	color: white;
+	font-size: 16px;
+	background-color: red;
+	padding: 3px 10px;
+	position: relative; 
+	top: -204px; 
+	border-radius: 5px;
+	z-index: 1000;
+}
 .customerEvaluate {
 	font-size: 18px; 
 	margin: 20px auto; 

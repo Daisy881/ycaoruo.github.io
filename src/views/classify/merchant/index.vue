@@ -2,16 +2,13 @@
 	<div class="merchant-container">
 		<img src="@/icons/img/shops/3.png" style="width: 165px; height: 140px;">
 		<div class="rightFont">
-			<div style="font-size: 18px;">{{shopsObj.shopsName}}</div>
+			<div style="font-size: 20px; font-weight: bolder;">{{shopsObj.shopsName}}</div>
 			<el-button @click="intoShop(shopsObj)">进店</el-button>
 			<span class="month-praise">配送：￥{{shopsObj.carriage}}&nbsp;|&nbsp;运送：￥{{shopsObj.dispatching_start}}起&nbsp;|&nbsp;配送{{shopsObj.dispatching_time}}分钟</span>
-			<div style="font-size: 18px; margin-top: -32px;">地址：{{shopsObj.address}}</div>
-			<div style="font-size: 18px; margin-top: -12px;">电话：{{shopsObj.phoneNumber}}</div>
-			<div style="font-size: 18px; margin-top: -10px;">商家描述：{{shopsObj.shop_description}}</div>
+			<div style="font-size: 16px; margin-top: -32px;">地址：{{shopsObj.address}}</div>
+			<div style="font-size: 16px; margin-top: -12px;">电话：{{shopsObj.phoneNumber}}</div>
+			<div style="font-size: 16px; margin-top: -10px;">商家描述：{{shopsObj.shop_description}}</div>
 		</div>
-		<div style="font-size: 18px;">评价</div>
-		<div>评价1</div>
-		<div>评价2</div>
 	</div>
 </template>
 
@@ -30,7 +27,10 @@
 				this.$emit('closeHandler')
 				sessionStorage.setItem('listObj', JSON.stringify(params))
 				this.$router.push({
-					name: 'shop'
+					name: 'shop',
+					query: {
+						type: 'view'
+					}
 				})
 			}
 		}

@@ -7,7 +7,9 @@
 					<el-col :span="2">{{item.picAddress}}</el-col>
 					<el-col :span="12">{{item.goodsName}}, {{item.count}}</el-col>
 					<el-col :span="5">总价：￥{{item.allPrice | priceFormat}}</el-col>
-					<el-col :span="3">{{item.state}}</el-col>
+					<el-col :span="3">
+						<span :class="{'stateClass': stateFlag}">{{item.state}}</span>
+					</el-col>
 				</el-row>
 			</el-col>
 		</el-row>
@@ -25,7 +27,8 @@
 				titleName: '全部订单',
 				noOrder: false,
 				listQuery: [],
-				modArr: []
+				modArr: [],
+				stateFlag: false
 			}
 		},
 		mounted() {
@@ -50,11 +53,15 @@
 				getList(username)
 				 .then(response => {
 				 		this.modArr = response.data
-						this.listQuery = response.data
-			 			for (const i in response.data) {
-		 					this.listQuery[i].state = this.doOrder(this.listQuery[i].state)
-			 			}
-				 })
+						if (response.data.length === 0) {
+							this.noOrder = true
+						} else {
+							this.listQuery = response.data
+							for (const i in response.data) {
+			 					this.listQuery[i].state = this.doOrder(this.listQuery[i].state)
+				 			}
+						}
+				 }).catch(()=> { })
 			},
 			// 判断订单状态
 			doOrder(state) {
@@ -63,9 +70,9 @@
 				} else if (state === 1) {
 					return '已接单'
 				} else if (state === 2) {
-					return '待付款'
+					return '去付款'
 				} else if (state === 3) {
-					return '待评价'
+					return '去评价'
 				} else if (state === 4) {
 					return '评价完成'
 				} else if (state === 5) {
@@ -80,16 +87,22 @@
 			getTitleName() {
 				if (this.id === 1) {
 					this.titleName = '全部订单'
-					this.listQuery = this.modArr
+					this.stateFlag = false
+					if (this.modArr.length === 0) {
+						this.noOrder = true
+					} else {
+						this.noOrder = false
+						this.listQuery = this.modArr
+					}
 				} else if (this.id === 2) {
 					this.titleName = '已接单'
 					this.getOrderState('已接单')
 				} else if (this.id === 3) {
 					this.titleName = '待付款'
-					this.getOrderState('待付款')
+					this.getOrderState('去付款')
 				} else if (this.id === 4) {
 					this.titleName = '待评价'
-					this.getOrderState('待评价', '评价完成')
+					this.getOrderState('去评价', '评价完成')
 				} else if (this.id === 5) {
 					this.titleName = '退款/售后'
 					this.getOrderState('已退款', '已发起退款', '退款成功')
@@ -99,20 +112,35 @@
 			getOrderState(params, params2, params3) {
 				let arr = []
 				for (const i in this.modArr) {
-					if (this.modArr[i].state === params || this.modArr[i].state === params2 || this.modArr[i].state === params3) {
+					if (this.modArr[i].state === params || this.modArr[i].state === params2 || 
+						this.modArr[i].state === params3) {
 						arr.push(this.modArr[i])
 					}
-					if (arr.length < 1) {
-						this.noOrder = true
+					if (params === '去评价' || params === '去付款') {
+						this.stateFlag = true
 					} else {
-						this.noOrder = false
+						this.stateFlag = false
 					}
 				}
+				arr.length < 1 ? this.noOrder = true : this.noOrder = false
 				this.listQuery = arr
 			}
 		}
 	}
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+	.stateClass {
+    width: 48px;
+    padding: 3px;
+    border-radius: 5px;
+    background-color: #66B0FF;
+    position: absolute;
+    right: 65px;
+    top: -3px;
+
+    &:hover {
+    	cursor: pointer;
+    }
+	}
 </style>

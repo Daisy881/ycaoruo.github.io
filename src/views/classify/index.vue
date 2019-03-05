@@ -12,6 +12,7 @@
 				<ul>
 					<li>
 						<img :src="item.picAddress" style="width: 300px; height: 350px;" @click="handleDetails(item)"/>
+						<div class="saleType" v-if="type === 'two'">{{item.saleType}}折</div>
 						<div class="productName" v-if="type === 'two'">{{item.goodsName}}
 							<span class="price">￥{{item.price}}</span>
 							<span class="doorPrice">￥{{item.originalPrice}}</span>
@@ -28,7 +29,7 @@
 		</div>
 		<el-dialog :title="titleName" :visible.sync="dialogVisible" :close-on-click-modal="false" width="60%">
 			<merchant v-if="type === 'one'" @closeHandler="closeDialog" :shopsObj="shopsObj"></merchant>
-			<product v-if="type === 'two'" @closeHandler="closeDialog" :goodsObj="goodsObj"></product>
+			<product v-if="type === 'two'" @closeHandler="closeDialog" @setGoods="intoCar" :goodsObj="goodsObj"></product>
 		</el-dialog>
 		<copyright></copyright>
 	</div>
@@ -121,10 +122,10 @@
 			this.type = this.$route.query.type
 			this.id = this.$route.query.id
 			if (this.type === 'one') {
-				this.titleName = 'shops'
+				this.titleName = '商家详情'
 				this.getShopsList()
 			} else {
-				this.titleName = 'goods'
+				this.titleName = '商品详情'
 				this.getGoodsList()
 			}
 		},
@@ -201,7 +202,10 @@
 			intoShop(params) {
 				sessionStorage.setItem('listObj', JSON.stringify(params))
 				this.$router.push({
-					name: 'shop'
+					name: 'shop',
+					query: {
+						type: 'view'
+					}
 				})
 			},
 			getGoods() {
@@ -282,5 +286,8 @@
 		padding-bottom: 10px;
 		margin: 0 0 50px 40px;
 		border: 1px solid #c0c4cc;
+	}
+	.saleType {
+		top: -355px;
 	}
 </style>

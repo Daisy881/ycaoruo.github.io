@@ -6,6 +6,7 @@
 			<ul v-for="(item, index) in this.listQuery" :value="item.value" :key="index">
 				<li>
 					<img :src="item.url" style="width: 300px; height: 350px;" @click="doProduct(item)"/>
+					<div class="saleType">{{item.saleType}}折</div>
 					<div class="productName">{{item.goodsName}}
 						<span class="price">￥{{item.price}}</span>
 						<span class="doorPrice">￥{{item.originalPrice}}</span>
@@ -201,5 +202,8 @@
 	}
 	.goHome {
 		left: 40px;
+	}
+	.saleType {
+		top: -355px;
 	}
 </style>

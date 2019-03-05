@@ -24,10 +24,12 @@ var sqlMap = {
   //商品信息
   goods: {
     getGoods: 'select * from goods_info',
+    getGoodsById: 'select * from goods_info g, shops_goods sg where g.id = sg.goods_id and sg.shops_id = ?',
     searchGoods: 'select * from goods_info where goodsName like ? ' 
   },
   shops: {
     getShops: 'select * from shops_info',
+    getIdByShopsName: 'select s.id from shops_info s where shopsName = ?',
     searchShops: 'select * from shops_info where shopsName like ?'
   },
   goods_shops: {
@@ -38,6 +40,15 @@ var sqlMap = {
   // 订单支付
   payOrder: {
     getPayOrder: 'select * from payOrder where username = ?'
+  },
+  // 评价
+  evaluate: {
+    shopsEvaluate: `select userinfo.id, userinfo.username, eva.content from 
+                      evaluate eva, user_ruo userinfo where eva.user_id = userinfo.id 
+                      and eva.shops_id = ?`,
+    goodsEvaluate: `select userinfo.id, userinfo.username, eva.content
+                      from evaluate eva, user_ruo userinfo where eva.user_id = userinfo.id 
+                      and eva.shops_id = ? and eva.goods_id = ?`
   },
   // 头像
   headPortrait: {
