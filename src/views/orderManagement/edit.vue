@@ -8,7 +8,7 @@
 					<el-col :span="12">{{item.goodsName}}, {{item.count}}</el-col>
 					<el-col :span="5">总价：￥{{item.allPrice | priceFormat}}</el-col>
 					<el-col :span="3">
-						<span :class="{'stateClass': stateFlag}">{{item.state}}</span>
+						<span :class="{'stateClass': stateFlag}" @click="goTo(item)">{{item.state}}</span>
 					</el-col>
 				</el-row>
 			</el-col>
@@ -124,6 +124,19 @@
 				}
 				arr.length < 1 ? this.noOrder = true : this.noOrder = false
 				this.listQuery = arr
+			},
+			// 去付款
+			goTo(prop) {
+				if (prop.state === '去付款') {
+					this.$router.push({
+						name: 'pay'
+					})
+					this.$store.dispatch('setPrice', prop.allPrice)
+				} else if (prop.state === '去评价') {
+					this.$router.push({
+						name: 'evaluate'
+					})
+				} 
 			}
 		}
 	}

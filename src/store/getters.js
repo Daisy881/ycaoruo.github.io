@@ -1,5 +1,7 @@
 const getters = {
-  currentUser: state => state.user.currentUser,
-  isLogin: state => state.user.isLogin
+  // minutes: state => state.pay.minutes,
+  // seconds: state => state.pay.seconds,
+  price: state => state.pay.price,
+  number: state => state.pay.number
 }
 export default getters

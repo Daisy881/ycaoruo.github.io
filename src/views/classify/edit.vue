@@ -55,12 +55,6 @@
 				evaluateList: []
 			}
 		},
-		filters: {
-			dateFormat(val) {
-				let data = new Date(val)
-				return data.getFullYear() + '-' + (data.getMonth() + 1) + '-' + data.getDate()
-			}
-		},
 		components: {
 			homeTop,
 			copyright

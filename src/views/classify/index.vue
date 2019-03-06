@@ -61,55 +61,7 @@
 				goodsObj: null,
 				shopsObj: null,
 				arr: [],
-				titleType: '',
-				imgUrl1: [{
-					url:  require('@/icons/img/goods/1.jpg'),
-        	value: '1'
-				},{
-					url:  require('@/icons/img/goods/2.jpg'),
-        	value: '2'
-				},{
-					url:  require('@/icons/img/goods/3.jpg'),
-        	value: '3'
-				},{
-					url:  require('@/icons/img/goods/4.jpg'),
-        	value: '4'
-				},{
-					url:  require('@/icons/img/goods/5.jpg'),
-        	value: '5'
-				}],
-				imgUrl2: [{
-					url:  require('@/icons/img/goods/1.jpg'),
-        	value: '1'
-				},{
-					url:  require('@/icons/img/goods/2.jpg'),
-        	value: '2'
-				},{
-					url:  require('@/icons/img/goods/3.jpg'),
-        	value: '3'
-				},{
-					url:  require('@/icons/img/goods/4.jpg'),
-        	value: '4'
-				},{
-					url:  require('@/icons/img/goods/5.jpg'),
-        	value: '5'
-				}],
-				imgUrl3: [{
-					url:  require('@/icons/img/goods/1.jpg'),
-        	value: '1'
-				},{
-					url:  require('@/icons/img/goods/2.jpg'),
-        	value: '2'
-				},{
-					url:  require('@/icons/img/goods/3.jpg'),
-        	value: '3'
-				},{
-					url:  require('@/icons/img/goods/4.jpg'),
-        	value: '4'
-				},{
-					url:  require('@/icons/img/goods/5.jpg'),
-        	value: '5'
-				}]
+				titleType: ''
 			}
 		},
 		components: {

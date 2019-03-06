@@ -30,7 +30,7 @@
 		<div style="background-color: #66B0FF; height: 80px;">
 			<div class="total-font">合计：</div>
 			<div class="total-nums">￥{{this.totalPrice | priceFormat}}</div>
-			<div class="calculate-total" @click="doCount">去结算</div>
+			<div class="calculate-total" @click="doCount(totalPrice)">去结算</div>
 		</div>
 	</div>
 </template>
@@ -80,7 +80,8 @@
 				 .then(response => { })
 				 .catch(() => { })
 			},
-			doCount(){
+			doCount(prop){
+				this.$store.dispatch('setPrice', prop)
 				this.$router.push({
 					name: 'pay'
 				})
