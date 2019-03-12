@@ -28,4 +28,17 @@ router.post('/goodsEvaluate', (req, res) => {
     }
   })
 })
+
+// 增加评价
+router.post('/addEvaluate', (req, res) => {
+  const sql = $sql.evaluate.addEvaluate
+  let params = req.body
+  connection.conn.query(sql, [params.userId, params.shopsId, params.goodsId, params.content], function(err, rows, fields) {
+    if (err) {
+      res.json({message:'增加失败', status: 400})
+    } else {
+      res.json({message:'增加成功', status: 200})
+    }
+  })
+})
 module.exports = router

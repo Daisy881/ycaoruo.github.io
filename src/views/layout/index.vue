@@ -221,7 +221,7 @@
 				this.$router.push({
 					name: 'orderManagement',
 					query: {
-						id: 1
+						type: 'view'
 					}
 				})
 			},

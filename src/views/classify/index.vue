@@ -207,6 +207,7 @@
 					shopName: params.shopsName,
 					username: sessionStorage.getItem('username'),
 					picAddress: params.picAddress,
+					goodsId: params.id,
 					goodsName: params.goodsName,
 					price: params.price,
 					count: 1

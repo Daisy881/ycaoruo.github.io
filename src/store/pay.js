@@ -31,7 +31,7 @@ const pay = {
 		// 	commit('SET_SECONDS', data)
 		// },
 		setPrice({commit}, data) {
-			commit('SET_PRICE', data)
+			commit('SET_PRICE', data.toFixed(2))
 		},
 		setNumber({commit}, data) {
 			commit('SET_NUMBER', data)

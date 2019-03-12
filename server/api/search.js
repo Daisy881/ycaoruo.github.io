@@ -43,7 +43,6 @@ router.post('/searchMhu', (req, res) => {
   let params = req.body
   connection.conn.query(sql, [params.name, params.name], function(err, rows, fields) {
     if (err) {
-    	console.log(err)
       res.json({message:'获取失败', status: 400})
     } else {
       if (rows.length > 0) {

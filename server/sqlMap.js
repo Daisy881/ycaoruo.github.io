@@ -11,15 +11,20 @@ var sqlMap = {
   },
   // 用户订单
   order: {
-    getOrder: 'select * from order_info where user_name = ?'
+    getOrder: 'select * from order_info where user_name = ?',
+    // 增加去付款订单
+    addOrder: 'insert into order_info (picAddress, goodsName, count, allPrice, state) values (?, ?, ?, ?, 2)',
+    // 修改订单状态
+    editOrder: 'update order_info set state = ? where id = ?'
   },
   // 购物车
   shoppingCar: {
     getShoppingCar: 'select * from shops_car where shops_userName = ?',
-    addShoppingCar: `insert into shops_car (shops_Name, shops_userName, shops_picAddress, shops_goodsName, shops_price, shops_count) 
-                    values (?, ?, ?, ?, ?, ?)`,
+    addShoppingCar: `insert into shops_car (shops_Name, shops_userName, shops_picAddress, goods_id, shops_goodsName, shops_price, shops_count) 
+                    values (?, ?, ?, ?, ?, ?, ?)`,
     editShoppingCarCount: 'update shops_car set shops_count = ? where id = ?', 
-    delShoppingCar: 'delete from shops_car where id = ?'
+    delShoppingCarById: 'delete from shops_car where id = ?', 
+    delShoppingCar: 'delete from shops_car where shops_userName = ?'
   },
   //商品信息
   goods: {
@@ -48,7 +53,8 @@ var sqlMap = {
                       and eva.shops_id = ?`,
     goodsEvaluate: `select userinfo.id, userinfo.username, eva.content
                       from evaluate eva, user_ruo userinfo where eva.user_id = userinfo.id 
-                      and eva.shops_id = ? and eva.goods_id = ?`
+                      and eva.shops_id = ? and eva.goods_id = ?`,
+    addEvaluate: 'insert into evaluate values (?, ?, ?, ?)'
   },
   // 头像
   headPortrait: {

@@ -20,3 +20,16 @@ export function getGoodsEvaluate(params) {
 		}
 	})
 }
+
+export function addEvaluate(params) {
+	return request({
+		method: 'post',
+		url: '/api/evaluate/addEvaluate',
+		data: {
+			'userId': params.userId,
+			'shopsId': params.shopsId,
+			'goodsId': params.goodsId,
+			'content': params.content
+		}
+	})
+}

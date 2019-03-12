@@ -36,17 +36,20 @@
 </template>
 
 <script>
-	import { getList, editGoodsCount,  delGoods } from '@/api/frame/shoppingCar'
+	import { getList, editGoodsCount,  delGoods, delAllGoods } from '@/api/frame/shoppingCar'
+  import Cookies from 'js-cookie'
 	export default {
 		name: 'shoppingCar',
 		data(){
 			return {
     		listQuery: [],
-    		totalPrice: 0
+    		totalPrice: 0,
+    		number: 0
 			}
 		},
 		mounted () {
 			this.getList()
+      this.number = this.orderNumber()
 		},
 		methods: {
 			//初始化
@@ -81,11 +84,46 @@
 				 .catch(() => { })
 			},
 			doCount(prop){
+				// 清空购物车
+				delAllGoods(sessionStorage.getItem('username'))
+				 .then(response => { })
+				 .catch(() => { })
+        this.$store.dispatch('setNumber', this.number)
 				this.$store.dispatch('setPrice', prop)
 				this.$router.push({
-					name: 'pay'
+					name: 'pay',
+					params: { 
+						shoppingCarList: this.listQuery
+					}
 				})
-			}
+			},
+      // 生成订单号 4位随机数+当前时间+4位随机数
+      orderNumber(t) {
+      	let nowTime = new Date() 
+      	let tY = nowTime.getFullYear() // 年  
+      	let tM = nowTime.getMonth() + 1 // 月
+      	let tD = nowTime.getDate() // 日
+      	let tH = nowTime.getHours() // 时
+      	let mm = nowTime.getMinutes() // 分
+      	let mr = Math.floor(Math.random() * 10000)
+        let mr2 = Math.floor(Math.random() * 10000)
+      	if (tY >= 1 && tY <= 9) {
+      		tY = "0" + tY
+      	}
+      	if (tM >= 1 && tM <= 9) {
+      		tM = "0" + tM
+      	}
+      	if (tD >= 1 && tD <= 9) {
+      		tD = "0" + tD
+      	}
+      	if (tH >= 1 && tH <= 9) {
+      		tH = "0" + tH
+      	}
+      	if (mm >= 1 && mm <= 9) {
+      		mm = "0" + mm
+      	}
+      	return mr + '' + tY + tM + tD + tH + mm + mr2
+      }
 		}
 	}
 </script>

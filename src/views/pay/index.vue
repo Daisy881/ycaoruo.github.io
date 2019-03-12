@@ -6,7 +6,7 @@
 		<div class="border-main">
 			<div style="text-align: center; margin-bottom: 20px;">
 				<div class="payTime">支付剩余时间：{{this.startTime}}</div>
-				<div style="font-size: 24px;">￥{{parseInt(price) | priceFormat}}</div>
+				<div style="font-size: 24px;">￥{{price}}</div>
 				<div class="merchant-order">订单号：{{this.number}}</div>
 			</div>
 			<div class="payWay" @click="doBankCard">银行卡支付
@@ -48,19 +48,17 @@
         startTime: '',
         lockSeconds: 1200,
 				number: '',
-        dialogVisible: false
+        dialogVisible: false,
+        listQuery: []
 			}
 		},
 		components: {
 			copyright
 		},
 		mounted(){
-      if (Cookies.get('number')) {
-        this.number = Cookies.get('number')
-      } else {
-        this.orderNumber()
-      }
+      this.number = Cookies.get('number')
       this.getTime()
+      this.listQuery = this.$route.params.shoppingCarList
 		},
     computed: {
       price() {
@@ -119,7 +117,7 @@
         let sec = time.split(':')[2]
         return parseInt(hour * 3600) + parseInt(min * 60) + parseInt(sec)
       },
-      // 将秒转为分秒
+      // 将秒转为 分:秒
       secToTime(time) {
         let t = ''
         if (time >= 0) {
@@ -152,43 +150,14 @@
         // this.$router.push({
         //   name: ''
         // })
-        this.$store.dispatch('setNumber', this.orderNum)
 			},
+      // 订单超时
       confirm() {
       	this.dialogVisible = false
       	this.$router.push({
       		name: 'orderManagement',
-      		query: {
-      			id: '1'
-      		}
+          params: { shoppingCarList: this.listQuery }
       	})
-      },
-      // 生成订单号 4位随机数+当前时间+4位随机数
-      orderNumber(t) {
-      	let nowTime = new Date() 
-      	let tY = nowTime.getFullYear() // 年
-      	let tM = nowTime.getMonth() + 1 // 月
-      	let tD = nowTime.getDate() // 日
-      	let tH = nowTime.getHours() // 时
-      	let mm = nowTime.getMinutes() // 分
-      	let mr = Math.floor(Math.random() * 10000)
-        let mr2 = Math.floor(Math.random() * 10000)
-      	if (tY >= 1 && tY <= 9) {
-      		tY = "0" + tY
-      	}
-      	if (tM >= 1 && tM <= 9) {
-      		tM = "0" + tM
-      	}
-      	if (tD >= 1 && tD <= 9) {
-      		tD = "0" + tD
-      	}
-      	if (tH >= 1 && tH <= 9) {
-      		tH = "0" + tH
-      	}
-      	if (mm >= 1 && mm <= 9) {
-      		mm = "0" + mm
-      	}
-      	this.number = mr + '' + tY + tM + tD + tH + mm + mr2
       }
 		}
 	}

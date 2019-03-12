@@ -14,29 +14,57 @@
 			</el-col>
 		</el-row>
 		<div class="noOrder" v-if="this.noOrder">对不起，没有任何订单</div>
+		<el-dialog title="评价" :visible.sync="dialogVisible" width="30%" center>
+			<el-row :gutter="0">
+				<el-col :span="4">{{this.evaluateList.picAddress}}</el-col>
+				<el-col :span="10">{{this.evaluateList.goodsName}}</el-col>
+				<el-col :span="10">{{this.evaluateList.allPrice}}</el-col>
+				<el-col :span="22">
+					<el-input v-model="input" placeholder="评价内容"></el-input>
+				</el-col>
+			</el-row>
+			<span slot="footer" class="dialog-footer">
+		    <el-button type="primary" @click="confirm">确 定</el-button>
+		    <el-button @click="cancel">取消</el-button>
+		  </span>
+		</el-dialog>
 	</div>
 </template>
 
 <script>
-	import { getList } from '@/api/frame/order'
+  import { getList } from '@/api/frame/user'
+	import { getIdByShopsName } from '@/api/frame/shops'
+	import { getOrderList, addOrder, editOrder } from '@/api/frame/order'
+	import { addEvaluate } from '@/api/frame/evaluate'
 
 	export default {
 		data() {
 			return {
-				id: 0,
+				type: '',
 				titleName: '全部订单',
 				noOrder: false,
 				listQuery: [],
 				modArr: [],
-				stateFlag: false
+				stateFlag: false,
+				evaluateList: {},
+				dialogVisible: false,
+				input: '',
+				userId: 0,
+				shopsId: 0
 			}
 		},
+		props: ['id','listData'],
 		mounted() {
+			this.type = this.$route.query.type
+			if (!this.type) {
+				this.addPay()
+			}
 			this.getList()
+			this.getUserId()
 		},
-		// 监听路由中id的变化
+		// 监听id的变化
 		watch: {
-			'$route': 'fatchData'
+			'id': 'fatchData'
 		},
 		created() {
 			this.fatchData()
@@ -44,13 +72,12 @@
 		methods: {
 			// id发生变化时调用方法
 			fatchData() {
-				this.id = this.$route.query.id
-				this.getTitleName()
+				this.getTitleName(this.id)
 			},
 			// 初始化
 			getList() {
 				const username = sessionStorage.getItem('username')
-				getList(username)
+				getOrderList(username)
 				 .then(response => {
 				 		this.modArr = response.data
 						if (response.data.length === 0) {
@@ -62,6 +89,37 @@
 				 			}
 						}
 				 }).catch(()=> { })
+			},
+			// 增加待付款订单
+			addPay(){
+				let orderInfo = {}
+				for (const i in this.listData) {
+					orderInfo.picAddress = this.listData[i].shops_picAddress
+					// orderInfo.shopsName = this.listData[i].shops_Name
+					orderInfo.goodsName = this.listData[i].shops_goodsName
+					orderInfo.count = this.listData[i].shops_count
+					orderInfo.allPrice = this.listData[i].shops_price
+				console.log(orderInfo,33)
+				}
+				// addOrder(orderInfo)
+				//  .then(response => {console.log("增加成功") })
+				//  .catch(() => { })
+			},
+			getUserId() {
+				getList(sessionStorage.getItem('username'))
+				  .then(response => {
+				  	for (const i in response.data) {
+						  this.userId = response.data[i].id
+				  	}
+				  }).catch(() => { })
+			},
+			getShopsId() {
+				getIdByShopsName(this.evaluateList.shopsName)
+				  .then(response => {
+				  	for (const i in response.data) {
+						  this.shopsId = response.data[i].id
+				  	}
+				  }).catch(() => { })
 			},
 			// 判断订单状态
 			doOrder(state) {
@@ -84,8 +142,8 @@
 				}
 			},
 			// 编辑页 根据id的变化改变titleName 每类型有相对应的订单及其状态
-			getTitleName() {
-				if (this.id === 1) {
+			getTitleName(id) {
+				if (id === 1) {
 					this.titleName = '全部订单'
 					this.stateFlag = false
 					if (this.modArr.length === 0) {
@@ -94,16 +152,16 @@
 						this.noOrder = false
 						this.listQuery = this.modArr
 					}
-				} else if (this.id === 2) {
+				} else if (id === 2) {
 					this.titleName = '已接单'
 					this.getOrderState('已接单')
-				} else if (this.id === 3) {
+				} else if (id === 3) {
 					this.titleName = '待付款'
 					this.getOrderState('去付款')
-				} else if (this.id === 4) {
+				} else if (id === 4) {
 					this.titleName = '待评价'
-					this.getOrderState('去评价', '评价完成')
-				} else if (this.id === 5) {
+					this.getOrderState('去评价')
+				} else if (id === 5) {
 					this.titleName = '退款/售后'
 					this.getOrderState('已退款', '已发起退款', '退款成功')
 				}
@@ -125,7 +183,7 @@
 				arr.length < 1 ? this.noOrder = true : this.noOrder = false
 				this.listQuery = arr
 			},
-			// 去付款
+			// 去付款和去评价
 			goTo(prop) {
 				if (prop.state === '去付款') {
 					this.$router.push({
@@ -133,10 +191,58 @@
 					})
 					this.$store.dispatch('setPrice', prop.allPrice)
 				} else if (prop.state === '去评价') {
-					this.$router.push({
-						name: 'evaluate'
-					})
+					this.dialogVisible = true
+					this.evaluateList = prop
+					this.getShopsId()
 				} 
+			},
+			// 确定 修改订单状态 并将评价加入到评价表中
+			confirm() {
+			  if (this.input) {
+			  	const orderInfo = {
+			  		state: 0,
+			  		id: this.evaluateList.id
+			  	}
+					editOrder(orderInfo) 
+					 .then(response => { 
+					 	if (response.data.status === 200) {
+					 		const evaluateInfo = {
+				  			userId: this.userId,
+				  			shopsId: this.shopsId,
+				  			goodsId: this.evaluateList.goods_id,
+				  			content: this.input
+						  }
+					 		addEvaluate(evaluateInfo)
+						  .then(response => {
+						  	if(response.data.status === 200) {
+						  		this.$message({
+							  		message: '评价成功！',
+							  		type: 'success'
+							  	})
+						  	} else {
+						  		this.$message({
+						  			message: '评价失败，请稍后再试！',
+						  			type: 'warning'
+						  		})
+						  	}
+						  }).catch(() => { })
+					 	} else {
+					 		this.$message({
+					 			message: '请检查网络设置后重试！',
+					 			type: 'warning'
+					 		})
+					 	}
+					 	this.dialogVisible = false
+					 })
+					 .catch(() => { })
+
+				  		
+				} else {
+
+				}
+			},
+			cancel() {
+				this.dialogVisible = false
 			}
 		}
 	}
@@ -144,12 +250,12 @@
 
 <style scoped lang="scss">
 	.stateClass {
-    width: 48px;
+    width:65px;
     padding: 3px;
     border-radius: 5px;
     background-color: #66B0FF;
     position: absolute;
-    right: 65px;
+    right: 30px;
     top: -3px;
 
     &:hover {

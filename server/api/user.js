@@ -12,7 +12,6 @@ router.post('/getUserByUsername', (req, res) => {
 			res.json({message:'获取失败', status: 400})
 			return
 		} else {
-      console.log(rows)
       // 返回token 如果存在 返回token 否则返回null
       if (rows.length > 0) { // 存在用户
         for (const i in rows) {
@@ -31,7 +30,6 @@ router.post('/getUserByPhoneNumber', (req, res) => {
   let params = req.body
   connection.conn.query(sql, [params.phoneNumber], function(err, rows, fields) {
     if (err) {
-      console.log(err)
       res.json({message:'获取失败', status: 400})
       return
     } else {
@@ -68,10 +66,8 @@ router.post('/addUser', (req, res) => {
   let params = req.body
   connection.conn.query(sql, [params.username, params.password, params.phoneNumber], function(err, result) {
     if (err) {
-      console.log(err)
       res.json({message:'增加失败', status: 400})
     } else {
-      console.log(result)
       res.json({message:'增加成功', status: 200})
     }
   })

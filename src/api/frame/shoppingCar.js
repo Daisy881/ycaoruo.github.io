@@ -18,6 +18,7 @@ export function addGoods(params) {
 			'shopName': params.shopName,
 			'username': params.username,
 			'picAddress': params.picAddress,
+			'goodsId': params.goodsId,
 			'goodsName': params.goodsName,
 			'price': params.price,
 			'count': params.count
@@ -42,6 +43,16 @@ export function delGoods(id) {
 		url: '/api/shoppingCar/delShoppingCar',
 		data: {
 			'id': id
+		}
+	})
+}
+
+export function delAllGoods(username) {
+	return request({
+		method: 'post',
+		url: '/api/shoppingCar/delAllGoods',
+		data: {
+			'username': username
 		}
 	})
 }
