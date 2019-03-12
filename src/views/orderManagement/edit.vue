@@ -6,24 +6,25 @@
 				<el-row :gutter="0">
 					<el-col :span="2">{{item.picAddress}}</el-col>
 					<el-col :span="12">{{item.goodsName}}, {{item.count}}</el-col>
-					<el-col :span="5">总价：￥{{item.allPrice | priceFormat}}</el-col>
+					<el-col :span="5">总价：￥{{(item.allPrice * item.count) | priceFormat}}</el-col>
 					<el-col :span="3">
 						<span :class="{'stateClass': stateFlag}" @click="goTo(item)">{{item.state}}</span>
 					</el-col>
 				</el-row>
 			</el-col>
 		</el-row>
-		<div class="noOrder" v-if="this.noOrder">对不起，没有任何订单</div>
+		<div class="noOrder" v-if="noOrder">对不起，没有任何订单</div>
 		<el-dialog title="评价" :visible.sync="dialogVisible" width="30%" center>
 			<el-row :gutter="0">
-				<el-col :span="4">{{this.evaluateList.picAddress}}</el-col>
-				<el-col :span="10">{{this.evaluateList.goodsName}}</el-col>
-				<el-col :span="10">{{this.evaluateList.allPrice}}</el-col>
-				<el-col :span="22">
+				<el-col :span="8">{{this.evaluateList.picAddress}}</el-col>
+				<el-col :span="11">{{this.evaluateList.goodsName}}</el-col>
+				<el-col :span="5">￥{{this.evaluateList.allPrice}}</el-col>
+				<el-col :span="24" style="margin-top: 10px;">
 					<el-input v-model="input" placeholder="评价内容"></el-input>
 				</el-col>
+				<div v-if="inputFlag" style="color: red; font-size: 10px;">请输入评价内容</div>
 			</el-row>
-			<span slot="footer" class="dialog-footer">
+			<span slot="footer">
 		    <el-button type="primary" @click="confirm">确 定</el-button>
 		    <el-button @click="cancel">取消</el-button>
 		  </span>
@@ -32,6 +33,7 @@
 </template>
 
 <script>
+  import Cookies from 'js-cookie'
   import { getList } from '@/api/frame/user'
 	import { getIdByShopsName } from '@/api/frame/shops'
 	import { getOrderList, addOrder, editOrder } from '@/api/frame/order'
@@ -43,6 +45,7 @@
 				type: '',
 				titleName: '全部订单',
 				noOrder: false,
+				inputFlag: false,
 				listQuery: [],
 				modArr: [],
 				stateFlag: false,
@@ -83,6 +86,7 @@
 						if (response.data.length === 0) {
 							this.noOrder = true
 						} else {
+							this.noOrder = false
 							this.listQuery = response.data
 							for (const i in response.data) {
 			 					this.listQuery[i].state = this.doOrder(this.listQuery[i].state)
@@ -92,18 +96,29 @@
 			},
 			// 增加待付款订单
 			addPay(){
-				let orderInfo = {}
 				for (const i in this.listData) {
-					orderInfo.picAddress = this.listData[i].shops_picAddress
-					// orderInfo.shopsName = this.listData[i].shops_Name
-					orderInfo.goodsName = this.listData[i].shops_goodsName
-					orderInfo.count = this.listData[i].shops_count
-					orderInfo.allPrice = this.listData[i].shops_price
-				console.log(orderInfo,33)
+				  const orderInfo = {
+				  	goodsId: this.listData[i].goods_id,
+				  	username: this.listData[i].shops_userName,
+				  	picAddress: this.listData[i].shops_picAddress,
+				  	goodsName: this.listData[i].shops_goodsName,
+				  	count: this.listData[i].shops_count,
+				  	allPrice: this.listData[i].shops_price,
+				  	state: 2,
+				  	shopsName: this.listData[i].shops_Name,
+				  	orderNumber: Cookies.get('number')
+				  }
+					addOrder(orderInfo)
+					 .then(response => {
+					 		if (response.data.status === 400) {
+					 			this.$message({
+					 				message: '请检查网络设置后重试！',
+					 				type: 'warning'
+					 			})
+					 		}
+					 })
+					 .catch(() => { })
 				}
-				// addOrder(orderInfo)
-				//  .then(response => {console.log("增加成功") })
-				//  .catch(() => { })
 			},
 			getUserId() {
 				getList(sessionStorage.getItem('username'))
@@ -199,6 +214,7 @@
 			// 确定 修改订单状态 并将评价加入到评价表中
 			confirm() {
 			  if (this.input) {
+			  	this.inputFlag = false
 			  	const orderInfo = {
 			  		state: 0,
 			  		id: this.evaluateList.id
@@ -219,6 +235,7 @@
 							  		message: '评价成功！',
 							  		type: 'success'
 							  	})
+							  	this.getList()
 						  	} else {
 						  		this.$message({
 						  			message: '评价失败，请稍后再试！',
@@ -235,10 +252,8 @@
 					 	this.dialogVisible = false
 					 })
 					 .catch(() => { })
-
-				  		
-				} else {
-
+					} else {
+						this.inputFlag = true
 				}
 			},
 			cancel() {

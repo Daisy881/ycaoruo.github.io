@@ -46,7 +46,7 @@
 			return {
 				id: 1,
         startTime: '',
-        lockSeconds: 1200,
+        lockSeconds: 5,
 				number: '',
         dialogVisible: false,
         listQuery: []

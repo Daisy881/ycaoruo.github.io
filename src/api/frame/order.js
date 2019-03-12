@@ -15,10 +15,15 @@ export function addOrder(params) {
 		method: 'post',
 		url: '/api/order/addOrder',
     data: {
+      'goodsId': params.goodsId,
+      'username': params.username,
       'picAddress': params.picAddress,
       'goodsName': params.goodsName,
       'count': params.count,
-      'allPrice': params.allPrice
+      'allPrice': params.allPrice,
+      'state': params.state,
+      'shopsName': params.shopsName,
+      'orderNumber': params.orderNumber
     }
 	})
 }

@@ -29,7 +29,7 @@
 		<div v-show="this.listQuery.length===0" style="margin: 20px 100px;">对不起，没有任何商品！</div>
 		<div style="background-color: #66B0FF; height: 80px;">
 			<div class="total-font">合计：</div>
-			<div class="total-nums">￥{{this.totalPrice | priceFormat}}</div>
+			<div class="total-nums">￥{{totalPrice | priceFormat}}</div>
 			<div class="calculate-total" @click="doCount(totalPrice)">去结算</div>
 		</div>
 	</div>
@@ -98,7 +98,7 @@
 				})
 			},
       // 生成订单号 4位随机数+当前时间+4位随机数
-      orderNumber(t) {
+      orderNumber() {
       	let nowTime = new Date() 
       	let tY = nowTime.getFullYear() // 年  
       	let tM = nowTime.getMonth() + 1 // 月

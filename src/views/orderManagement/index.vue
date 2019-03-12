@@ -72,7 +72,7 @@
 			edit,
 			copyright
 		},
-		mounted(){
+		created(){
 			this.listData = this.$route.params.shoppingCarList
 		},
 		methods: {

@@ -16,12 +16,15 @@ router.post('/getOrder', (req, res) => {
   })
 })
 
-// 增加去付款订单
+// 增加订单
 router.post('/addOrder', (req, res) => {
   const sql = $sql.order.addOrder
   let params = req.body
-  connection.conn.query(sql, [params.picAddress, params.goodsName, params.count, params.allPrice], function(err, rows, fields) {
+  connection.conn.query(sql, [params.goodsId, params.username, params.picAddress, params.goodsName, 
+    params.count, params.allPrice, params.state, params.shopsName, params.orderNumber], 
+    function(err, rows, fields) {
     if (err) {
+      console.log(err)
       res.json({message:'增加失败', status: 400})
     } else {
       res.json({message:'增加成功', status: 200})
