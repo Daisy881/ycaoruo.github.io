@@ -6,8 +6,9 @@ var sqlMap = {
 	  getByUsername: 'select * from user_ruo where username = ? or phoneNumber = ? and password = ?',
 	  getByPhoneNumber: 'select * from user_ruo where phoneNumber = ?',
     add: 'insert into user_ruo (username, password, phoneNumber) values (?, ?, ?)',
-    edit: `update user_ruo set username = ?, headPortrait = ?, nickName = ?, birthday = ?, 
-          detailAddress = ?, phoneNumber = ?, password = ? where id = ?`
+    edit: `update user_ruo set username = ?, nickName = ?, birthday = ?, 
+          detailAddress = ?, phoneNumber = ?, password = ? where id = ?`,
+    saveHeadPortrait: 'update user_ruo set headPortrait =? where id = ?'
   },
   // 用户订单
   order: {
@@ -56,10 +57,6 @@ var sqlMap = {
                       from evaluate eva, user_ruo userinfo where eva.user_id = userinfo.id 
                       and eva.shops_id = ? and eva.goods_id = ?`,
     addEvaluate: 'insert into evaluate (id, user_id, shops_id, goods_id, content) values (null, ?, ?, ?, ?)'
-  },
-  // 头像
-  headPortrait: {
-    saveHeadPortrait: 'insert into head_portrait (originalname, path, mimetype) values (?, ?, ?)'
   }
 }
  

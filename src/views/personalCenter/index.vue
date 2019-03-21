@@ -7,14 +7,13 @@
 			<div style="margin: -20px auto 30px 0;">个人设置</div>
 			<el-form :model="formData" ref="ruleForm" :rules="rules" label-position="left" label-width="25%">
 				<el-form-item prop="headPortrait" label="头像">
-					<el-upload v-model="formData.headPortrait" action="https://jsonplaceholder.typicode.com/posts/" :on-success="handleSuccess" :show-file-list="false" :before-upload="handleBeforeUpload">
-						<img v-if="dialogImageUrl" :src="dialogImageUrl" alt="" class="avatar" style="margin-bottom: -13px;">
-						<i v-else class="el-icon-plus avatar-uploader-icon"></i>
-					</el-upload>
-          <!-- <a class="touxiang">
-            <img :src="dialogImageUrl" class="avatar" v-if="dialogImageUrl" alt="" />
-            <input type="file" name="headPortrait" ref="upload" capture="camera" accept="image/*" @change="getImg">
-          </a> -->
+          <div class="headPortrait-box">
+            <label for="my_file">
+              <img :src='formData.headPortrait' alt="" v-if="dialogImageUrl" style="width: 50px; height: 50px; border-radius: 5px;position: relative; left: -245px;"/>
+              <span v-else style="margin-left: 10px;">+</span>
+            </label>
+          </div>
+          <input type="file" ref="upload" name="avatar" id='my_file' style="display:none;" accept="image/jpg" @change="getImg">
 				</el-form-item>
 				<el-form-item prop="nickName" label="昵称">
 					<el-input v-model="formData.nickName" maxlength="15" @blur="nickNameExit"></el-input>
@@ -100,7 +99,7 @@
 <script>
   import { getList, editList } from '@/api/frame/user'
   import { loginByNumber } from '@/api/frame/login'
-  import { saveHeadPortrait } from '@/api/frame/uploadImg'
+  import { saveHeadPortrait, saveToSql } from '@/api/frame/uploadImg'
 	import copyright from '@/views/copyright/index'
 	export default {
 		name: 'personalCenter',
@@ -156,6 +155,7 @@
         timer: null,
         userId: 0,
 				formData: {
+          id: 0,
 					headPortrait: '',
 					nickName: '',
 					birthday: '',
@@ -249,15 +249,15 @@
       getList() {
         getList(sessionStorage.getItem('username'))
          .then(response => {
-          for(const i in response.data) {
-            this.formData = response.data[i]
+          // for(const i in response.data) {
+            this.formData = response.data[0]
             if (this.formData.headPortrait) {
               this.dialogImageUrl = this.formData.headPortrait
             } else {
               this.dialogImageUrl = ''
             }
             this.isSafety()
-          }
+          // }
         }).catch(() => { })
       },
       // 判断nickName是否唯一
@@ -275,66 +275,34 @@
           }).catch(() => {})
         }
       },
-      // getImg() {
-      //   let formData = new FormData()
-      //   formData.append('file', this.$refs.upload.files[0])
-      //   saveHeadPortrait(formData)
-      //    .then(response => {
-      //       console.log(response, 33)
-      //    })
-      // },
-			handleSuccess(res, file) {
-				this.dialogImageUrl = URL.createObjectURL(file.raw)
-        console.log(this.dialogImageUrl, 22)
-        // const reader = new FileReader()
-        // reader.readAsDataURL(file)
-        // reader.onload = () => {
-        //   const _base64 = reader.result
-        //   console.log(_base64)
-        // }
-			},
-      // 图片上传前 判断格式 将缓存地址转为base64位
-			handleBeforeUpload(file) {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = () => {
-          const _base64 = reader.result
-          this.dialogImageUrl1 = this.convertBase64ToBlob(_base64)
-          console.log(this.dialogImageUrl1, 11)
+      getImg(event) {
+        if (event) {
+          let img = event.target.files[0]
+          let size = img.size
+          if (size > 3145728) {
+            this.$message({
+              message: '请选择3M以内的图片！',
+              type: 'warning'
+            })
+            return false
+          }
+          let form = new FormData()
+          form.append('avatar', img, this.avatar_name)
+          saveHeadPortrait(form)  // 存入本地
+           .then(response => {
+             if (response.data.status !== 400) {
+              this.formData.headPortrait = response.data
+             } else {
+              this.$message({
+                message: '请检查网络设置后重试',
+                type: 'warning'
+              })
+             }
+           })
+           .catch((error) => {
+            return false
+           })
         }
-				const isJPG = file.type === 'image/jpeg'
-        const isLt2M = file.size / 1024 / 1024 < 2
-
-        if (!isJPG) {
-          this.$message.error('上传touxiang图片只能是 JPG 格式!')
-        }
-        if (!isLt2M) {
-          this.$message.error('上传touxiang图片大小不能超过 2MB!')
-        }
-        return isJPG && isLt2M
-			},
-      // 将base64编码格式的图片转为blob对象
-      convertBase64ToBlob (base64){
-        var base64Arr = base64.split(',')
-        var imgtype = ''
-        var base64String = ''
-        if(base64Arr.length > 1){
-          //如果是图片base64，去掉头信息
-          base64String = base64Arr[1];
-          imgtype = base64Arr[0].substring(base64Arr[0].indexOf(':') + 1, base64Arr[0].indexOf(';'))
-        }
-        // 将base64解码
-        var bytes = atob(base64String)
-        //var bytes = base64
-        var bytesCode = new ArrayBuffer(bytes.length)
-         // 转换为类型化数组
-        var byteArray = new Uint8Array(bytesCode)
-        // 将base64转换为ascii码
-        for (var i = 0; i < bytes.length; i++) {
-            byteArray[i] = bytes.charCodeAt(i)
-        }
-        // 生成Blob对象（文件对象）
-        return new Blob( [bytesCode] , {type : imgtype})
       },
 			handleChange() {
 
@@ -348,45 +316,47 @@
               cancelButtonText: '取消',
               type: 'warning'
             }).then(() => {
-              // if (!this.dialogImageUrl) {
-              //   this.formData.headPortrait = ''
-              // } else {
-              //   this.formData.headPortrait = this.dialogImageUrl
-              // }
-              getList(sessionStorage.getItem('username'))
+              this.userId = this.formData.id
+              const userInfo = {
+                username: this.formData.nickName,
+                nickName: this.formData.nickName,
+                birthday: this.formData.birthday,
+                // shippingAddress: this.formData.shippingAddress,
+                detailAddress: this.formData.detailAddress,
+                phoneNumber: this.formData.phoneNumber,
+                password: this.formData.password,
+                userId: this.userId
+              }
+              // 保存头像存入数据库
+              saveToSql(this.userId) 
                .then(response => {
-                  for(const i in response.data) {
-                    this.userId = response.data[i].id
-                    const userInfo = {
-                      headPortrait: this.formData.headPortrait,
-                      username: this.formData.nickName,
-                      nickName: this.formData.nickName,
-                      birthday: this.formData.birthday,
-                      // shippingAddress: this.formData.shippingAddress,
-                      detailAddress: this.formData.detailAddress,
-                      phoneNumber: this.formData.phoneNumber,
-                      password: this.formData.password,
-                      userId: this.userId
-                    }
-                    editList(userInfo)
-                     .then(response => {
-                        if (response.status === 200) {
-                          sessionStorage.setItem('username', this.formData.nickName)
-                          sessionStorage.setItem('phoneNumber', this.formData.phoneNumber)
-                          this.$message({
-                            message: '修改成功',
-                            type: 'success'
-                          })
-                        } else {
-                          this.$message({
-                            message: '修改失败, 请重新输入',
-                            type: 'warning'
-                          })
-                        }
-                     }).catch(() => { })
+                  if (response.data.status !== 200) {
+                    this.$message({
+                      message: '头像保存失败，请检查网络设置后重试',
+                      type: 'warning'
+                    })
+                    return false
                   }
-                })
-                .catch(() => { })
+               }).catch(() => {
+                return false
+               })
+              // 其他信息存入数据库
+              editList(userInfo)
+               .then(response => {
+                  if (response.status === 200) {
+                    sessionStorage.setItem('username', this.formData.nickName)
+                    sessionStorage.setItem('phoneNumber', this.formData.phoneNumber)
+                    this.$message({
+                      message: '修改成功',
+                      type: 'success'
+                    })
+                  } else {
+                    this.$message({
+                      message: '修改失败, 请重新输入',
+                      type: 'warning'
+                    })
+                  }
+               }).catch(() => { })
             }).catch(() => { })
           } else {
             return false

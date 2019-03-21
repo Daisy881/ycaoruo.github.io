@@ -29,19 +29,20 @@
   height: 52px;
   border: 1px solid #c0ccda;	
 }
-.avatar-uploader-icon {
+.headPortrait-box {
+  width: 50px;
+  height: 50px;
+  font-size: 50px;
+	color: #dfdddd;
   border: 1px dashed #d9d9d9;
   border-radius: 6px;
-  font-size: 18px;
-  width: 50px;
-  height: 50px;
   line-height: 50px;
-}
-.avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 6px;
-  display: block;
+  cursor: pointer;
+  position: relative;
+  left: 283px;
+  label {
+  	cursor: pointer;
+  }
 }
 .changePhoneNumber {
 	width: 40px;

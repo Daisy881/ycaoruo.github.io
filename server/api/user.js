@@ -77,7 +77,7 @@ router.post('/addUser', (req, res) => {
 router.post('/editUser', (req, res) => {
   let sql = $sql.user.edit
   let params = req.body
-  connection.conn.query(sql, [params.username, params.headPortrait, params.nickName, params.birthday, 
+  connection.conn.query(sql, [params.username, params.nickName, params.birthday, 
   					 params.detailAddress, params.phoneNumber, params.password, params.id], function(err, rows, fields) {
     if (err) {
       res.json({message:'修改失败', status: 400})

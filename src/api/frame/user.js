@@ -15,7 +15,6 @@ export function editList(params) {
 		method: 'post',
 		url: '/api/user/editUser',
     data: {
-      'headPortrait': params.headPortrait,
       'username': params.username,
       'nickName': params.nickName,
       'birthday': params.birthday,

@@ -125,7 +125,7 @@
 		<el-dialog title="协议" :visible.sync="dialogVisible" width="40%" :close-on-click-modal="false">
 			<el-input v-model="protocol" type="textarea" resize="none" :rows="15" :readonly="true"></el-input>
 		  <span slot="footer" class="dialog-footer">
-		    <div class="disagree" @click="dialogVisible = false">不同意</div>
+		    <el-button class="disagree" @click="dialogVisible = false">不同意</el-button>
 		    <el-button type="primary" @click="dialogVisible = false">同意</el-button>
 		  </span>
 		</el-dialog>
