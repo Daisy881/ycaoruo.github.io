@@ -12,7 +12,7 @@
 				<div style="font-size: 18px;">营业时间：{{listObj.openingHours | dateFormat}}</div>
 				<div style="font-size: 14px; margin-top: 10px;">{{listObj.WIFI}}</div>
 			</div>
-			<img src="@/icons/img/goods/1.jpg" style="width: 260px; height: 240px;">
+			<img :src="listObj.picAddress" style="width: 260px; height: 240px;">
 			<div class="sales">
 				<span style="font-size: 18px;">优惠促销</span>
 				<ul v-for="(item, index) in saleList" :value="item.value" :key="index" style="margin-top: 20px">

@@ -1,6 +1,6 @@
 <template>
 	<div class="product-container">			
-		<img src="@/icons/img/goods/1.jpg" style="width: 165px; height: 140px;">
+		<img :src="goodsObj.picAddress" style="width: 165px; height: 140px;">
 		<div class="rightFont">
 			<div style="font-size: 20px; font-weight: bolder;">{{goodsObj.goodsName}}</div>
 			<el-button @click="addCar(goodsObj)">加入购物车</el-button>

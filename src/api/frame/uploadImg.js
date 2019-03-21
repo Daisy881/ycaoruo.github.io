@@ -1,11 +1,8 @@
 import request from '@/utils/frame/request'
 
-export function saveHeadPortrait(params) {
+export function getImg(params) {
 	return request({
 		method: 'post',
-		url: '/api/uploadImg/saveHeadPortrait',
-		contentType: false,
-		processData: false,
-		data: params
+		url: '/api/uploadImg/picture-upload'
 	})
 }

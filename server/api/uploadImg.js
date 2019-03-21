@@ -5,7 +5,7 @@ let $sql = require('../sqlMap')
 const multer = require("multer")
 
 // 保存图片
-let upload = multer({dest: '../../src/icons/img/头像'}).any()
+let upload = multer({dest: 'E:\headPortrait'}).any()
 router.post('/saveHeadPortrait', upload,  (req, res, next) => {
   // let newname = req.files[0].path
   // let obj = {

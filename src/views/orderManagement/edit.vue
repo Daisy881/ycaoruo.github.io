@@ -204,7 +204,7 @@
 					this.$router.push({
 						name: 'pay'
 					})
-					this.$store.dispatch('setPrice', prop.allPrice)
+					this.$store.dispatch('setPrice', prop.allPrice * prop.count)
 				} else if (prop.state === '去评价') {
 					this.dialogVisible = true
 					this.evaluateList = prop

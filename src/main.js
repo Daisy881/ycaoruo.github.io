@@ -13,13 +13,11 @@ import store from './store' // 状态管理
 import '@/directive/frame/filters' // 导入过滤器
 
 // 验证码
-// import cookieParase from 'cookie-parser'
 // import svgCaptcha from 'svg-captcha'
 import axios from 'axios'
 Vue.prototype.$axios = axios
 
 Vue.use(ElementUI)
-// Vue.use(cookieParase)
 Vue.config.productionTip = false
 
 

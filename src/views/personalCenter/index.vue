@@ -7,14 +7,14 @@
 			<div style="margin: -20px auto 30px 0;">个人设置</div>
 			<el-form :model="formData" ref="ruleForm" :rules="rules" label-position="left" label-width="25%">
 				<el-form-item prop="headPortrait" label="头像">
-					<!-- <el-upload v-model="formData.headPortrait" action="https://jsonplaceholder.typicode.com/posts/" :on-success="handleSuccess" :show-file-list="false" :before-upload="handleBeforeUpload">
+					<el-upload v-model="formData.headPortrait" action="https://jsonplaceholder.typicode.com/posts/" :on-success="handleSuccess" :show-file-list="false" :before-upload="handleBeforeUpload">
 						<img v-if="dialogImageUrl" :src="dialogImageUrl" alt="" class="avatar" style="margin-bottom: -13px;">
 						<i v-else class="el-icon-plus avatar-uploader-icon"></i>
-					</el-upload> -->
-          <a class="touxiang">
+					</el-upload>
+          <!-- <a class="touxiang">
             <img :src="dialogImageUrl" class="avatar" v-if="dialogImageUrl" alt="" />
             <input type="file" name="headPortrait" ref="upload" capture="camera" accept="image/*" @change="getImg">
-          </a>
+          </a> -->
 				</el-form-item>
 				<el-form-item prop="nickName" label="昵称">
 					<el-input v-model="formData.nickName" maxlength="15" @blur="nickNameExit"></el-input>
@@ -251,12 +251,11 @@
          .then(response => {
           for(const i in response.data) {
             this.formData = response.data[i]
-            // console.log(this.formData.headPortrait,55)
-            // if (this.formData.headPortrait) {
-              // this.dialogImageUrl = this.formData.headPortrait
-            // } else {
-            //   this.dialogImageUrl = ''
-            // }
+            if (this.formData.headPortrait) {
+              this.dialogImageUrl = this.formData.headPortrait
+            } else {
+              this.dialogImageUrl = ''
+            }
             this.isSafety()
           }
         }).catch(() => { })
@@ -276,14 +275,14 @@
           }).catch(() => {})
         }
       },
-      getImg() {
-        let formData = new FormData()
-        formData.append('file', this.$refs.upload.files[0])
-        saveHeadPortrait(formData)
-         .then(response => {
-            console.log(response, 33)
-         })
-      },
+      // getImg() {
+      //   let formData = new FormData()
+      //   formData.append('file', this.$refs.upload.files[0])
+      //   saveHeadPortrait(formData)
+      //    .then(response => {
+      //       console.log(response, 33)
+      //    })
+      // },
 			handleSuccess(res, file) {
 				this.dialogImageUrl = URL.createObjectURL(file.raw)
         console.log(this.dialogImageUrl, 22)

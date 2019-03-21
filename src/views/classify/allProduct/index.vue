@@ -5,7 +5,7 @@
 		<div class="allPhoto" style="margin-top: 60px;">
 			<ul v-for="(item, index) in this.listQuery" :value="item.value" :key="index">
 				<li>
-					<img :src="item.url" style="width: 300px; height: 350px;" @click="doProduct(item)"/>
+					<img :src="item.picAddress" style="width: 300px; height: 350px;" @click="doProduct(item)"/>
 					<div class="saleType">{{item.saleType}}折</div>
 					<div class="productName">{{item.goodsName}}
 						<span class="price">￥{{item.price}}</span>
@@ -25,6 +25,7 @@
 <script>
 	import { getList, editGoodsCount, addGoods } from '@/api/frame/shoppingCar'
 	import { getGoodsList } from '@/api/frame/goods'
+	import { getImg } from '@/api/frame/uploadImg'
 	import { searchMhu } from '@/api/frame/search'
 	import homeTop from '@/views/homeTop/index'
 	import copyright from '@/views/copyright/index'
@@ -38,37 +39,6 @@
 				type: '',
 				count: 1,
 				searchThings: '',
-				imgUrl: [{
-					url: require('@/icons/img/goods/1.jpg'),
-					value: '1'
-				},{
-					url: require('@/icons/img/goods/2.jpg'),
-					value: '2'
-				},{
-					url: require('@/icons/img/goods/3.jpg'),
-					value: '3'
-				},{
-					url: require('@/icons/img/goods/4.jpg'),
-					value: '4'
-				},{
-					url: require('@/icons/img/goods/5.jpg'),
-					value: '5'
-				},{
-					url: require('@/icons/img/goods/5.jpg'),
-					value: '5'
-				},{
-					url: require('@/icons/img/goods/5.jpg'),
-					value: '5'
-				},{
-					url: require('@/icons/img/goods/5.jpg'),
-					value: '5'
-				},{
-					url: require('@/icons/img/goods/5.jpg'),
-					value: '5'
-				},{
-					url: require('@/icons/img/goods/5.jpg'),
-					value: '5'
-				}],
 				dialogVisible: false
 			}
 		},
@@ -92,6 +62,10 @@
 				 .then(response => {
 				 		this.listQuery = response.data
 				 })
+				 // getImg() 
+				 //  .then(response => {
+				 //  	console.log(response,99)
+				 //  })
 			},
 			getCount(params) {
 				this.count = params
