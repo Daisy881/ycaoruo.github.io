@@ -3,7 +3,7 @@
     <div class="logoClass">
       <img src="../../icons/img/图标.png" style="width: 210px; height: 100px;">
     </div>
-		<el-container style="height: 600px; margin-bottom: 209px;">
+		<el-container style="height: 600px; margin-bottom: 198px;">
 			<el-header style="padding: 0px;">
 				<div class="searchBox">
 					<div class="search">

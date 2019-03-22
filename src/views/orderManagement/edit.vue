@@ -1,19 +1,23 @@
 <template>
 	<div class="catalogue-main">
 		<div class="titleName">{{this.titleName}}</div>
-		<el-row :gutter="0" v-for="(item, index) in listQuery" :value="item.value" :key="index">
-			<el-col :span="20">
-				<el-row :gutter="0">
-					<el-col :span="2">{{item.picAddress}}</el-col>
-					<el-col :span="12">{{item.goodsName}}, {{item.count}}</el-col>
-					<el-col :span="5">总价：￥{{(item.allPrice * item.count) | priceFormat}}</el-col>
-					<el-col :span="3">
-						<span :class="{'stateClass': stateFlag}" @click="goTo(item)">{{item.state}}</span>
+		<div class="noOrder" v-if="noOrder">对不起，没有任何订单</div>
+		<div v-else style="height: 500px;">
+			<el-scrollbar style="height: 100%">
+				<el-row :gutter="0" v-for="(item, index) in listQuery" :value="item.value" :key="index">
+					<el-col :span="20">
+						<el-row :gutter="0">
+							<el-col :span="2">{{item.picAddress}}</el-col>
+							<el-col :span="12">{{item.goodsName}}, {{item.count}}</el-col>
+							<el-col :span="5">总价：￥{{(item.allPrice * item.count) | priceFormat}}</el-col>
+							<el-col :span="3">
+								<span :class="{'stateClass': stateFlag}" @click="goTo(item)">{{item.state}}</span>
+							</el-col>
+						</el-row>
 					</el-col>
 				</el-row>
-			</el-col>
-		</el-row>
-		<div class="noOrder" v-if="noOrder">对不起，没有任何订单</div>
+			</el-scrollbar>
+		</div>
 		<el-dialog title="评价" :visible.sync="dialogVisible" width="30%" center>
 			<el-row :gutter="0">
 				<el-col :span="8">{{this.evaluateList.picAddress}}</el-col>
