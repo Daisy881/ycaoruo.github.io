@@ -73,7 +73,7 @@ router.post('/addUser', (req, res) => {
   })
 })
  
-// 修改
+// 修改用户信息
 router.post('/editUser', (req, res) => {
   let sql = $sql.user.edit
   let params = req.body
@@ -86,5 +86,19 @@ router.post('/editUser', (req, res) => {
     }
   })
 })
+ 
+// 修改用户密码
+router.post('/editUserPwd', (req, res) => {
+  let sql = $sql.user.editPwd
+  let params = req.body
+  connection.conn.query(sql, [params.password, params.phoneNumber], function(err, rows, fields) {
+    if (err) {
+      res.json({message:'修改失败', status: 400})
+    } else {
+      res.json({message:'修改成功', status: 200})
+    }
+  })
+})
+
 
 module.exports = router

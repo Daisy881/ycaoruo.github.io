@@ -38,3 +38,14 @@ export function addUser(params) {
     }
 	})
 }
+
+export function editPwd(params) {
+  return request({
+    method: 'post',
+    url: '/api/user/editUserPwd',
+    data: {
+      'password': params.password,
+      'phoneNumber': params.phoneNumber
+    }
+  })
+}

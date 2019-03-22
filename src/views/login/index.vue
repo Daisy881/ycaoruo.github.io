@@ -52,7 +52,7 @@
 								<el-row :gutter="0">
 									<el-col :span="22" style="margin-top: 20px;">
 										<el-form-item label="账户" prop="phoneNumber">
-											<el-input v-model="formData2.phoneNumber" @blur="loginByNumber" placeholder="手机号">
+											<el-input v-model="formData2.phoneNumber" placeholder="手机号">
 												<i slot="prefix" class="el-icon-first-mobile"></i>
 											</el-input>
 										</el-form-item>
@@ -71,7 +71,7 @@
 							<div class="loginTip loginTip2">{{this.loginTip2}}</div>
 							<div class="loginTip codeTip">{{this.codeTip}}</div>
 						</el-tab-pane>
-						<div class="forgetPassword">忘记密码</div>
+						<div class="forgetPassword" @click="forgetPassword">忘记密码</div>
 						<div class="loginButton" @click="loginButton">登录</div>
 						<div style="margin: 20px;">还没有账号？<span class="freeRegistration" @click="freeRegistration">免费注册</span></div>
 					</el-tabs>
@@ -122,6 +122,7 @@
 				</div>
 			</div>
 		</div>
+		<!--协议-->
 		<el-dialog title="协议" :visible.sync="dialogVisible" width="40%" :close-on-click-modal="false">
 			<el-input v-model="protocol" type="textarea" resize="none" :rows="15" :readonly="true"></el-input>
 		  <span slot="footer" class="dialog-footer">
@@ -129,6 +130,32 @@
 		    <el-button type="primary" @click="dialogVisible = false">同意</el-button>
 		  </span>
 		</el-dialog>
+    <!--忘记密码-->
+    <el-dialog title="修改密码" :visible.sync="dialogEdit" :close-on-click-modal="false" width="50%">
+      <el-form :model="dialogFormPwd" ref="dialogForgetPwd" :rules="dialogRule" label-position="left" label-width="20%" style="margin-left: 30px;">
+        <el-row :gutter="0">
+          <el-col :span="21">
+            <el-form-item prop="verifyAccount" label="验证账号">
+              <el-input v-model="dialogFormPwd.verifyAccount" placeholder="请输入账号" @blur="phoneNumberExit">
+              </el-input>
+              <div class="loginTip" style="height: 0; left: 0; top: -12px;">{{this.accountTip}}</div>
+            </el-form-item>
+          </el-col>
+          <el-col :span="21">
+            <el-form-item prop="newPwd" label="新密码">
+              <el-input v-model="dialogFormPwd.newPwd" type="password" placeholder="请输入密码"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="21">
+            <el-form-item prop="confirmPassword" label="确认密码">
+              <el-input v-model="dialogFormPwd.confirmPassword" type="password" placeholder="请输入密码"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div class="bottomButton" style="left: 22%; background-color: white; border: 1px solid #dcdfe6;" @click="doCacel">取消</div>
+      <div class="bottomButton" style="left: 60%; top: -20px;" @click="doConfirmPwd">确定</div>
+    </el-dialog> 
 		<copyright style="margin-bottom: 0px;"></copyright>
 	</div>
 </template>
@@ -136,24 +163,13 @@
 <script>
 	import { loginByUsername, loginByNumber } from '@/api/frame/login'
 	import { sendCode } from '@/api/frame/code'
-	import { addUser } from '@/api/frame/user'
+	import { addUser, editPwd } from '@/api/frame/user'
 	import axios from 'axios'
 	import copyright from '@/views/copyright/index'
 
 	export default {
 		name: 'login',
 		data() {
-			let validatePhone = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入新手机号'))
-        } else {
-          if (!(/^1(3|4|5|7|8)\d{9}$/).test(value)) {
-            callback(new Error('请输入正确的手机号'))
-          } else {
-            callback()
-          }
-        }
-      }
       let validateVerification = (rule, value, callback) => {
       	if (value === '') {
       		callback(new Error('请输入验证码'))
@@ -186,6 +202,16 @@
 					callback()
 				}
 			}
+			let diaConfirmPwd = (rule, value, callback) => {
+				if (value === '') {
+					callback(new Error('请输入密码'))
+				} else {
+					if (value !== this.dialogFormPwd.newPwd) {
+						callback(new Error('两次输入密码不一致'))
+					}
+					callback()
+				}
+			}
 			return {
 				type: '',
 				activeNum: 'first',
@@ -193,12 +219,14 @@
 				loginTip: '',
 				loginTip2: '',
 				loginTip3: '',
+				accountTip: '',
 				codeFlag: true,
 				codeMsg: '',
 				code: 0,
 				codeTip: '',
 				codeTip1: '',
 				dialogVisible: false,
+				dialogEdit: false,
 				verificationCodeTip: false,
 				vNumber: '',
 				timeBack: '',
@@ -217,6 +245,11 @@
 					rePhoneNum: '',
 					reDynamicCode: '',
 					createPassword: '',
+					confirmPassword: ''
+				},
+				dialogFormPwd: {
+					verifyAccount: '',
+					newPwd: '',
 					confirmPassword: ''
 				},
 				rules:{
@@ -259,6 +292,18 @@
 						validator: confirmPwd,
 						trigger: 'blur'
 					}]
+				},
+				dialogRule: {
+					newPwd: [{
+						required: true,
+						message: '请输入新密码',
+						trigger: 'blur'
+					}],
+					confirmPassword: [{
+						required: true,
+						validator: diaConfirmPwd,
+						trigger: 'blur'
+					}]
 				}
 			}
 		},
@@ -283,10 +328,6 @@
       		this.type = 'use'
       	}
       },
-      // 手机号登录失焦事件
-      loginByNumber() {
-		      	
-      },
       // 获取手机动态码 60秒倒计时 并发送手机短信验证码
       getCode(){
       	if (this.type === 'use') {
@@ -310,7 +351,7 @@
       		if (this.formData3.rePhoneNum === '') {
 	      		this.loginTip3 = '账户不能为空'
 	      	} else if (!(/^1(3|4|5|7|8)\d{9}$/).test(this.formData3.rePhoneNum)) {
-	      		this.loginTip3 = '请输入正确的手机号'
+	      		this.loginTip3 = '请输入正确格式的手机号'
 	      	} else {
 	    			let phoneNumber = this.formData3.rePhoneNum
 						loginByNumber(phoneNumber)
@@ -378,6 +419,59 @@
       handleCode() {
       	this.generatedCode()
       },
+      // 忘记密码
+      forgetPassword() {
+      	this.dialogEdit = true
+      },
+      // 判断账号是否存在
+      phoneNumberExit() {
+      },
+      doCacel() {
+      	this.$refs.dialogForgetPwd.resetFields()
+      	this.dialogEdit = false
+      },
+      // 点击确定保存修改后的密码
+      doConfirmPwd() {
+      	if (this.dialogFormPwd.verifyAccount === '') {
+      		this.accountTip = '账户不能为空'
+      	} else if (!(/^1(3|4|5|7|8)\d{9}$/).test(this.dialogFormPwd.verifyAccount)) {
+    			this.accountTip = '请输入正确格式的手机号'
+    		} else {
+    			loginByNumber(this.dialogFormPwd.verifyAccount)
+					 .then(response => {
+						if (response.data.status === 400) {
+							this.accountTip = '不存在此账户，请重新输入'
+						} else {
+							this.accountTip = ''
+							this.$refs.dialogForgetPwd.validate(valid => {
+			          if (valid) {
+			            let uInfo = {
+			            	password: this.dialogFormPwd.confirmPassword,
+			            	phoneNumber: this.dialogFormPwd.verifyAccount
+			            }
+			            editPwd(uInfo)
+			             .then(response => {
+			             		if (response.data.status === 200) {
+			            			this.dialogEdit = false
+			             			this.$message({
+			             				message: '修改密码成功',
+			             				type: 'success'
+			             			})
+			             		} else {
+			             			this.$message({
+			             				message: '修改密码失败，请重试',
+			             				type: 'warning'
+			             			})
+			             		}
+			             })
+			          } else {
+			            return false
+			          }
+			        })
+						}
+					}).catch(() => {})
+    		}
+      },
       freeRegistration() {
       	this.$router.push({
 					query: {
@@ -386,9 +480,9 @@
 				})
       },
       loginButton() {
-      	if (this.activeNum === 'first') {
+      	if (this.activeNum === 'first' && this.loginTip === '') {
       		this.$refs.ruleForm.validate(valid => {
-						if (valid && this.loginTip === '') {
+						if (valid) {
 							const userInfo = {
 								username: this.formData1.username,
 								phoneNumber: this.formData1.username,
@@ -408,7 +502,6 @@
 								}
 							}).catch(() => { })
 						} else {
-							this.loginTip = '账号或密码错误, 请重新输入'
 							this.generatedCode()
 						}
 					})

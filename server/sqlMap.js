@@ -8,6 +8,7 @@ var sqlMap = {
     add: 'insert into user_ruo (username, password, phoneNumber) values (?, ?, ?)',
     edit: `update user_ruo set username = ?, nickName = ?, birthday = ?, 
           detailAddress = ?, phoneNumber = ?, password = ? where id = ?`,
+    editPwd: 'update user_ruo set password =? where phoneNumber = ?',
     saveHeadPortrait: 'update user_ruo set headPortrait =? where id = ?'
   },
   // 用户订单

@@ -8,8 +8,8 @@
 			<el-form :model="formData" ref="ruleForm" :rules="rules" label-position="left" label-width="25%">
 				<el-form-item prop="headPortrait" label="头像">
           <div class="headPortrait-box">
-            <label for="my_file">
-              <img :src='formData.headPortrait' alt="" v-if="dialogImageUrl" style="width: 50px; height: 50px; border-radius: 5px;position: relative; left: -245px;"/>
+            <label for="my_file" style="display:block; overflow: hidden; width: 50px;">
+              <img :src='formData.headPortrait' alt="" v-if="dialogImageUrl" style="width: 50px; height: 50px; border-radius: 6px;position: relative; left: -245px;"/>
               <span v-else style="margin-left: 10px;">+</span>
             </label>
           </div>
