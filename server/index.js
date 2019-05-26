@@ -13,6 +13,11 @@ const searchApi = require('./api/search')
 const evaluateApi = require('./api/evaluate')
 const uploadImgApi = require('./api/uploadImg')
 const codeApi = require('./api/code')
+<<<<<<< HEAD
+=======
+const addressApi = require('./api/address')
+const payApi = require('./api/pay')
+>>>>>>> 提交后续代码，完善信息
 
 // 解决跨域问题 在起的服务中设置请求头 即允许所有的地址都可以访问后台接口即3000端口
 app.use((req, res, next) => {
@@ -35,6 +40,11 @@ app.use('/api/search', searchApi)
 app.use('/api/evaluate', evaluateApi)
 app.use('/api/uploadImg', uploadImgApi)
 app.use('/api/code', codeApi)
+<<<<<<< HEAD
+=======
+app.use('/api/address', addressApi)
+app.use('/api/pay', payApi)
+>>>>>>> 提交后续代码，完善信息
  
 // 监听端口
 app.listen(3000)

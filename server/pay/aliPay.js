@@ -1,164 +1,319 @@
-const path = require('path')
-const fs = require('fs')
-const moment = require('moment')
-const crypto = require('crypto')
- 
-let ALI_PAY_SETTINGS = {
-    APP_ID: '2016092800611994',
-    APP_GATEWAY_URL: 'xxxxxxx',//用于接收支付宝异步通知
-    AUTH_REDIRECT_URL: 'xxxxxxx',//第三方授权或用户信息授权后回调地址。授权链接中配置的redirect_uri的值必须与此值保持一致。
-    APP_PRIVATE_KEY_PATH: path.join(__dirname, 'pem', 'remind', 'sandbox', 'app-private.pem'),//应用私钥
-    APP_PUBLIC_KEY_PATH: path.join(__dirname, 'pem', 'remind', 'sandbox', 'app-public.pem'),//应用公钥
-    ALI_PUBLIC_KEY_PATH: path.join(__dirname, 'pem', 'remind', 'sandbox', 'ali-public.pem'),//阿里公钥
-    AES_PATH: path.join(__dirname, 'pem', 'remind', 'sandbox', 'aes.txt'),//aes加密（暂未使用）
+var fs = require('fs');
+var path = require('path');
+var utl = require('./utl');
+
+var alipay_gate_way = 'https://openapi.alipay.com/gateway.do';
+var alipay_gate_way_sandbox = 'https://openapi.alipaydev.com/gateway.do';
+
+module.exports = Alipay;
+
+/**
+ *
+ * @param {Object} opts
+ * @param {String} opts.appId  支付宝的appId
+ * @param {String} opts.notifyUrl  支付宝服务器主动通知商户服务器里指定的页面http/https路径
+ * @param {String} opts.rsaPrivate  商户私钥pem文件路径
+ * @param {String} opts.rsaPublic  支付宝公钥pem文件路径
+ * @param {String} opts.signType   签名方式, 'RSA' or 'RSA2'
+ * @param {Boolean} [opts.sandbox] 是否是沙盒环境
+ * @constructor
+ */
+function Alipay(opts) {
+    this.appId = opts.appId;
+    this.sandbox = !!opts.sandbox;
+    this.notifyUrl = opts.notifyUrl;
+    this.signType = opts.signType;
+
+    this.rsaPrivate = fs.readFileSync(opts.rsaPrivate, 'utf-8');
+    this.rsaPublic = fs.readFileSync(opts.rsaPublic, 'utf-8');
 }
- 
- 
-class AliPayHelper {
- 
-    /**
-     * 构造方法
-     * @param accountType   用于以后区分多支付账号
-     */
-    constructor(accountType) {
-        this.accountType = accountType
-        this.accountSettings = ALI_PAY_SETTINGS
-    }
- 
-    /**
-     * 构建app支付需要的参数
-     * @param subject       商品名称
-     * @param outTradeNo    自己公司的订单号
-     * @param totalAmount   金额
-     * @returns {string}
-     */
-    buildParams(subject, outTradeNo, totalAmount) {
-        let params = new Map()
-        params.set('app_id', this.accountSettings.APP_ID)
-        params.set('method', 'alipay.trade.app.pay')
-        params.set('charset', 'utf-8')
-        params.set('sign_type', 'RSA2')
-        params.set('timestamp', moment().format('YYYY-MM-DD HH:mm:ss'))
-        params.set('version', '1.0')
-        params.set('notify_url', this.accountSettings.APP_GATEWAY_URL)
-        params.set('biz_content', this._buildBizContent(subject, outTradeNo, totalAmount))
-        params.set('sign', this._buildSign(params))
- 
-        return [...params].map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&')
-    }
- 
-    /**
-     * 根据参数构建签名
-     * @param paramsMap    Map对象
-     * @returns {number|PromiseLike<ArrayBuffer>}
-     * @private
-     */
-    _buildSign(paramsMap) {
-        //1.获取所有请求参数，不包括字节类型参数，如文件、字节流，剔除sign字段，剔除值为空的参数
-        let paramsList = [...paramsMap].filter(([k1, v1]) => k1 !== 'sign' && v1)
-        //2.按照字符的键值ASCII码递增排序
-        paramsList.sort()
-        //3.组合成“参数=参数值”的格式，并且把这些参数用&字符连接起来
-        let paramsString = paramsList.map(([k, v]) => `${k}=${v}`).join('&')
- 
-        let privateKey = fs.readFileSync(this.accountSettings.APP_PRIVATE_KEY_PATH, 'utf8')
-        let signType = paramsMap.get('sign_type')
-        return this._signWithPrivateKey(signType, paramsString, privateKey)
-    }
- 
-    /**
-     * 通过私钥给字符串签名
-     * @param signType      返回参数的签名类型：RSA2或RSA
-     * @param content       需要加密的字符串
-     * @param privateKey    私钥
-     * @returns {number | PromiseLike<ArrayBuffer>}
-     * @private
-     */
-    _signWithPrivateKey(signType, content, privateKey) {
-        let sign
-        if (signType.toUpperCase() === 'RSA2') {
-            sign = crypto.createSign("RSA-SHA256")
-        } else if (signType.toUpperCase() === 'RSA') {
-            sign = crypto.createSign("RSA-SHA1")
-        } else {
-            throw new Error('请传入正确的签名方式，signType：' + signType)
-        }
-        sign.update(content)
-        return sign.sign(privateKey, 'base64')
-    }
- 
-    /**
-     * 生成业务请求参数的集合
-     * @param subject       商品的标题/交易标题/订单标题/订单关键字等。
-     * @param outTradeNo    商户网站唯一订单号
-     * @param totalAmount   订单总金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000]
-     * @returns {string}    json字符串
-     * @private
-     */
-    _buildBizContent(subject, outTradeNo, totalAmount) {
-        let bizContent = {
-            subject: subject,
-            out_trade_no: outTradeNo,
-            total_amount: totalAmount,
-            product_code: 'QUICK_MSECURITY_PAY',
-        }
- 
-        return JSON.stringify(bizContent)
-    }
- 
-    /**
-     * 验证支付宝异步通知的合法性
-     * @param params  支付宝异步通知结果的参数
-     * @returns {*}
-     */
-    verifySign(params) {
-        try {
-            let sign = params['sign']//签名
-            let signType = params['sign_type']//签名类型
-            let paramsMap = new Map()
-            for (let key in params) {
-                paramsMap.set(key, params[key])
-            }
-            let paramsList = [...paramsMap].filter(([k1, v1]) => k1 !== 'sign' && k1 !== 'sign_type' && v1)
-            //2.按照字符的键值ASCII码递增排序
-            paramsList.sort()
-            //3.组合成“参数=参数值”的格式，并且把这些参数用&字符连接起来
-            let paramsString = paramsList.map(([k, v]) => `${k}=${decodeURIComponent(v)}`).join('&')
-            let publicKey = fs.readFileSync(this.accountSettings.ALI_PUBLIC_KEY_PATH, 'utf8')
-            return this._verifyWithPublicKey(signType, sign, paramsString, publicKey)
-        } catch (e) {
-            console.error(e)
-            return false
-        }
-    }
- 
-    /**
-     * 验证签名
-     * @param signType      返回参数的签名类型：RSA2或RSA
-     * @param sign          返回参数的签名
-     * @param content       参数组成的待验签串
-     * @param publicKey     支付宝公钥
-     * @returns {*}         是否验证成功
-     * @private
-     */
-    _verifyWithPublicKey(signType, sign, content, publicKey) {
-        try {
-            let verify
-            if (signType.toUpperCase() === 'RSA2') {
-                verify = crypto.createVerify('RSA-SHA256')
-            } else if (signType.toUpperCase() === 'RSA') {
-                verify = crypto.createVerify('RSA-SHA1')
-            } else {
-                throw new Error('未知signType：' + signType)
-            }
-            verify.update(content)
-            return verify.verify(publicKey, sign, 'base64')
-        } catch (err) {
-            console.error(err)
-            return false
-        }
-    }
- 
+
+var props = Alipay.prototype;
+
+props.makeParams = function(method, biz_content) {
+    return {
+        app_id: this.appId,
+        method: method,
+        format: 'JSON',
+        charset: 'utf-8',
+        sign_type: this.signType,
+        timestamp: new Date().format('yyyy-MM-dd hh:mm:ss'),
+        version: '1.0',
+        biz_content: JSON.stringify(biz_content)
+    };
+};
+
+/**
+ * 生成支付参数供客户端使用
+ * @param {Object} opts
+ * @param {String} opts.subject              商品的标题/交易标题/订单标题/订单关键字等
+ * @param {String} [opts.body]               对一笔交易的具体描述信息。如果是多种商品，请将商品描述字符串累加传给body
+ * @param {String} opts.outTradeId           商户网站唯一订单号
+ * @param {String} [opts.timeout]            设置未付款支付宝交易的超时时间，一旦超时，该笔交易就会自动被关闭。
+                                              当用户进入支付宝收银台页面（不包括登录页面），会触发即刻创建支付宝交易，此时开始计时。
+                                              取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。
+                                              该参数数值不接受小数点， 如 1.5h，可转换为 90m。
+ * @param {String} opts.amount               订单总金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000]
+ * @param {String} [opts.sellerId]           收款支付宝用户ID。 如果该值为空，则默认为商户签约账号对应的支付宝用户ID
+ * @param {String} opts.goodsType            商品主类型：0—虚拟类商品，1—实物类商品 注：虚拟类商品不支持使用花呗渠道
+ * @param {String} [opts.passbackParams]     公用回传参数，如果请求时传递了该参数，则返回给商户时会回传该参数。支付宝会在异步通知时将该参数原样返回。本参数必须进行UrlEncode之后才可以发送给支付宝
+ * @param {String} [opts.promoParams]        优惠参数(仅与支付宝协商后可用)
+ * @param {String} [opts.extendParams]       业务扩展参数 https://doc.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.3oJPAi&treeId=193&articleId=105465&docType=1#kzcs
+ * @param {String} [opts.enablePayChannels]  可用渠道，用户只能在指定渠道范围内支付。当有多个渠道时用“,”分隔。注：与disable_pay_channels互斥
+ * @param {String} [opts.disablePayChannels] 禁用渠道，用户不可用指定渠道支付。当有多个渠道时用“,”分隔。 注：与enable_pay_channels互斥
+ * @param {String} [opts.storeId]            商户门店编号
+ */
+props.pay = function (opts) {
+
+    var biz_content = {
+        body: opts.body,
+        subject: opts.subject,
+        out_trade_no: opts.outTradeId,
+        timeout_express: opts.timeout,
+        total_amount: opts.amount,
+        seller_id: opts.sellerId,
+        product_code: 'QUICK_MSECURITY_PAY',
+        goods_type: opts.goodsType,
+        passback_params: opts.passbackParams,
+        promo_params: opts.promoParams,
+        extend_params: opts.extendParams,
+        enable_pay_channels: opts.enablePayChannels,
+        disable_pay_channels: opts.disablePayChannels,
+        store_id: opts.storeId
+    };
+
+    var params = this.makeParams('alipay.trade.app.pay', biz_content);
+    params.notify_url = this.notifyUrl;
+
+    return utl.processParams(params, this.rsaPrivate, this.signType);
+};
+
+/**
+ * 生成支付参数供web端使用
+ * @param {Object} opts
+ * @param {String} opts.subject              商品的标题/交易标题/订单标题/订单关键字等
+ * @param {String} [opts.body]               对一笔交易的具体描述信息。如果是多种商品，请将商品描述字符串累加传给body
+ * @param {String} opts.outTradeId           商户网站唯一订单号
+ * @param {String} [opts.timeout]            设置未付款支付宝交易的超时时间，一旦超时，该笔交易就会自动被关闭。
+                                              当用户进入支付宝收银台页面（不包括登录页面），会触发即刻创建支付宝交易，此时开始计时。
+                                              取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。
+                                              该参数数值不接受小数点， 如 1.5h，可转换为 90m。
+ * @param {String} opts.amount               订单总金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000]
+ * @param {String} [opts.sellerId]           收款支付宝用户ID。 如果该值为空，则默认为商户签约账号对应的支付宝用户ID
+ * @param {String} opts.goodsType            商品主类型：0—虚拟类商品，1—实物类商品 注：虚拟类商品不支持使用花呗渠道
+ * @param {String} [opts.passbackParams]     公用回传参数，如果请求时传递了该参数，则返回给商户时会回传该参数。支付宝会在异步通知时将该参数原样返回。本参数必须进行UrlEncode之后才可以发送给支付宝
+ * @param {String} [opts.promoParams]        优惠参数(仅与支付宝协商后可用)
+ * @param {String} [opts.extendParams]       业务扩展参数 https://doc.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.3oJPAi&treeId=193&articleId=105465&docType=1#kzcs
+ * @param {String} [opts.enablePayChannels]  可用渠道，用户只能在指定渠道范围内支付。当有多个渠道时用“,”分隔。注：与disable_pay_channels互斥
+ * @param {String} [opts.disablePayChannels] 禁用渠道，用户不可用指定渠道支付。当有多个渠道时用“,”分隔。 注：与enable_pay_channels互斥
+ * @param {String} [opts.storeId]            商户门店编号
+ * @param {String} [opts.return_url]         客户端回调地址，HTTP/HTTPS开头字符串
+ */
+props.webPay = function (opts) {
+
+    var biz_content = {
+        body: opts.body,
+        subject: opts.subject,
+        out_trade_no: opts.outTradeId,
+        timeout_express: opts.timeout,
+        total_amount: opts.amount,
+        seller_id: opts.sellerId,
+        product_code: 'FAST_INSTANT_TRADE_PAY',
+        goods_type: opts.goodsType,
+        passback_params: opts.passbackParams,
+        promo_params: opts.promoParams,
+        extend_params: opts.extendParams,
+        enable_pay_channels: opts.enablePayChannels,
+        disable_pay_channels: opts.disablePayChannels,
+        store_id: opts.storeId,
+        return_url: opts.return_url
+    };
+
+    var params = this.makeParams('alipay.trade.page.pay', biz_content);
+    params.notify_url = this.notifyUrl;
+
+    return utl.processParams(params, this.rsaPrivate, this.signType);
+};
+
+/**
+ * 签名校验
+ * @param {Object} response 支付宝的响应报文
+ */
+props.signVerify = function (response) {
+    var ret = utl.copy(response);
+    var sign = ret['sign'];
+    ret.sign = undefined;
+    ret.sign_type = undefined;
+
+    var tmp = utl.encodeParams(ret);
+    return utl.signVerify(tmp.unencode, sign, this.rsaPublic, this.signType);
 }
- 
-module.exports = AliPayHelper
+
+/**
+ * 查询交易状态 https://doc.open.alipay.com/doc2/apiDetail.htm?spm=a219a.7629065.0.0.PlTwKb&apiId=757&docType=4
+ * @param {Object} opts
+ * @param {String} [opts.outTradeId]    订单支付时传入的商户订单号,和支付宝交易号不能同时为空。 tradeId,outTradeId如果同时存在优先取tradeId
+ * @param {String} [opts.tradeId]       支付宝交易号，和商户订单号不能同时为空
+ * @param {String} [opts.appAuthToken]  https://doc.open.alipay.com/doc2/detail.htm?treeId=216&articleId=105193&docType=1
+ */
+props.query = function (opts) {
+
+    var biz_content = {
+        out_trade_no: opts.outTradeId,
+        trade_no: opts.tradeId
+    };
+
+    var params = {
+        app_id: this.appId,
+        method: 'alipay.trade.query',
+        format: 'JSON',
+        charset: 'utf-8',
+        sign_type: this.signType,
+        timestamp: new Date().format('yyyy-MM-dd hh:mm:ss'),
+        version: '1.0',
+        app_auth_token: opts.appAuthToken,
+        biz_content: JSON.stringify(biz_content)
+    };
+    var params = this.makeParams('alipay.trade.query', biz_content);
+    if(this.appAuthToken) {
+        params.app_auth_token = this.appAuthToken;
+    }
+
+    var body = utl.processParams(params, this.rsaPrivate, this.signType);
+
+    return utl.request({
+        method: 'GET',
+        url: (this.sandbox? alipay_gate_way_sandbox : alipay_gate_way) + '?' + body
+    });
+};
+
+
+/**
+ * 统一收单交易关闭接口 https://doc.open.alipay.com/doc2/apiDetail.htm?spm=a219a.7629065.0.0.6VzMcn&apiId=1058&docType=4
+ * @param {Object} opts
+ * @param {String} [opts.outTradeId]    订单支付时传入的商户订单号,和支付宝交易号不能同时为空。 tradeId,outTradeId如果同时存在优先取tradeId
+ * @param {String} [opts.tradeId]       支付宝交易号，和商户订单号不能同时为空
+ * @param {String} [opts.operatorId]    卖家端自定义的的操作员 ID
+ * @param {String} [opts.appAuthToken]  https://doc.open.alipay.com/doc2/detail.htm?treeId=216&articleId=105193&docType=1
+ */
+props.close = function (opts) {
+
+    var biz_content = {
+        out_trade_no: opts.outTradeId,
+        trade_no: opts.tradeId,
+        operator_id: opts.operatorId
+    };
+
+    var params = this.makeParams('alipay.trade.close', biz_content);
+    if(this.appAuthToken) {
+        params.app_auth_token = this.appAuthToken;
+    }
+
+    var body = utl.processParams(params, this.rsaPrivate, this.signType);
+
+    return utl.request({
+        method: 'GET',
+        url: (this.sandbox? alipay_gate_way_sandbox : alipay_gate_way) + '?' + body
+    });
+};
+
+
+/**
+ * 统一收单交易退款接口 https://doc.open.alipay.com/doc2/apiDetail.htm?spm=a219a.7629065.0.0.PlTwKb&apiId=759&docType=4
+ * @param {Object} opts
+ * @param {String} [opts.outTradeId]    订单支付时传入的商户订单号,和支付宝交易号不能同时为空。 tradeId,outTradeId如果同时存在优先取tradeId
+ * @param {String} [opts.tradeId]       支付宝交易号，和商户订单号不能同时为空
+ * @param {String} [opts.operatorId]    卖家端自定义的的操作员 ID
+ * @param {String} [opts.appAuthToken]  https://doc.open.alipay.com/doc2/detail.htm?treeId=216&articleId=105193&docType=1
+ * @param {String} opts.refundAmount    需要退款的金额，该金额不能大于订单金额,单位为元，支持两位小数
+ * @param {String} [opts.refundReason]  退款的原因说明
+ * @param {String} [opts.outRequestId]  标识一次退款请求，同一笔交易多次退款需要保证唯一，如需部分退款，则此参数必传。
+ * @param {String} [opts.storeId]       商户的门店编号
+ * @param {String} [opts.terminalId]    商户的终端编号
+ */
+props.refund  = function (opts) {
+
+    var biz_content = {
+        out_trade_no: opts.outTradeId,
+        trade_no: opts.tradeId,
+        operator_id: opts.operatorId,
+        refund_amount: opts.refundAmount,
+        refund_reason: opts.refundReason,
+        out_request_no: opts.outRequestId,
+        store_id: opts.storeId,
+        terminal_id: opts.terminalId
+    };
+
+    var params = this.makeParams('alipay.trade.refund', biz_content);
+    if(this.appAuthToken) {
+        params.app_auth_token = this.appAuthToken;
+    }
+
+    var body = utl.processParams(params, this.rsaPrivate, this.signType);
+
+     utl.request({
+        method: 'GET',
+        url:  body
+    }).then(function (ret) {
+         console.log("***** ret.body=" + body);
+     });
+};
+
+
+/**
+ * 统一收单交易退款查询 https://doc.open.alipay.com/doc2/apiDetail.htm?docType=4&apiId=1049
+ * @param {Object} opts
+ * @param {String} [opts.outTradeId]    订单支付时传入的商户订单号,和支付宝交易号不能同时为空。 tradeId,outTradeId如果同时存在优先取tradeId
+ * @param {String} [opts.tradeId]       支付宝交易号，和商户订单号不能同时为空
+ * @param {String} [opts.outRequestId]  请求退款接口时，传入的退款请求号，如果在退款请求时未传入，则该值为创建交易时的外部交易号
+ * @param {String} [opts.appAuthToken]  https://doc.open.alipay.com/doc2/detail.htm?treeId=216&articleId=105193&docType=1
+ */
+props.refundQuery = function (opts) {
+
+    var biz_content = {
+        out_trade_no: opts.outTradeId,
+        trade_no: opts.tradeId,
+        out_request_no: opts.outRequestId || opts.outTradeId
+    };
+
+    var params = this.makeParams('alipay.trade.fastpay.refund.query', biz_content);
+    if(this.appAuthToken) {
+        params.app_auth_token = this.appAuthToken;
+    }
+
+    var body = utl.processParams(params, this.rsaPrivate, this.signType);
+
+    return utl.request({
+        method: 'GET',
+        url: (this.sandbox? alipay_gate_way_sandbox : alipay_gate_way) + '?' + body
+    });
+};
+
+
+/**
+ * 查询对账单下载地址 https://doc.open.alipay.com/doc2/apiDetail.htm?spm=a219a.7629065.0.0.iX5mPA&apiId=1054&docType=4
+ * @param {Object} opts
+ * @param {String} [opts.billType]     账单类型，商户通过接口或商户经开放平台授权后其所属服务商通过接口可以获取以下账单类型：
+                                        trade、signcustomer；trade指商户基于支付宝交易收单的业务账单；signcustomer是指基于商户支付宝余额收入及支出等资金变动的帐务账单；
+ * @param {String} [opts.billDate]     账单时间：日账单格式为yyyy-MM-dd，月账单格式为yyyy-MM。
+ * @param {String} [opts.appAuthToken]  https://doc.open.alipay.com/doc2/detail.htm?treeId=216&articleId=105193&docType=1
+ */
+props.billDownloadUrlQuery = function (opts) {
+
+    var biz_content = {
+        bill_type: opts.billType,
+        bill_date: opts.billDate
+    };
+
+    var params = this.makeParams('alipay.data.dataservice.bill.downloadurl.query', biz_content);
+    if(this.appAuthToken) {
+        params.app_auth_token = this.appAuthToken;
+    }
+
+    var body = utl.processParams(params, this.rsaPrivate, this.signType);
+
+    return utl.request({
+        method: 'GET',
+        url: (this.sandbox? alipay_gate_way_sandbox : alipay_gate_way) + '?' + body
+    });
+};

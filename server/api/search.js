@@ -41,7 +41,11 @@ router.post('/searchGoods', (req, res) => {
 router.post('/searchMhu', (req, res) => {
   const sql = $sql.goods_shops.mohu
   let params = req.body
+<<<<<<< HEAD
   connection.conn.query(sql, [params.name, params.name], function(err, rows, fields) {
+=======
+  connection.conn.query(sql, [params.goodsName, params.shopsName], function(err, rows, fields) {
+>>>>>>> 提交后续代码，完善信息
     if (err) {
       res.json({message:'获取失败', status: 400})
     } else {

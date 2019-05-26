@@ -27,4 +27,21 @@
 }
 .el-scrollbar__wrap {
 	overflow-x: hidden !important;
+<<<<<<< HEAD
+=======
+}
+
+.area-select-wrap .area-select {
+    margin-left: 2px !important;
+}
+.area-select.medium {
+    width: 105px;
+}
+.area-select .area-selected-trigger {
+	top: -3px;
+	padding: 0px 22px 7px 25px;
+}
+.area-select .area-select-icon {
+	border: 0;
+>>>>>>> 提交后续代码，完善信息
 }

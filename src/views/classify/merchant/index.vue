@@ -1,6 +1,10 @@
 <template>
 	<div class="merchant-container">
+<<<<<<< HEAD
 		<img src="@/icons/img/shops/3.png" style="width: 165px; height: 140px;">
+=======
+		<img :src="shopsObj.shops_picAddress" style="width: 165px; height: 140px;">
+>>>>>>> 提交后续代码，完善信息
 		<div class="rightFont">
 			<div style="font-size: 20px; font-weight: bolder;">{{shopsObj.shopsName}}</div>
 			<el-button @click="intoShop(shopsObj)">进店</el-button>

@@ -12,7 +12,11 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
      '/api': {
+<<<<<<< HEAD
         target: 'http://192.168.101.25:3000',// 请求的第三方地址 
+=======
+        target: 'http://192.168.3.1:3000',// 请求的第三方地址 
+>>>>>>> 提交后续代码，完善信息
         changeOrigin: true,
         pathRewrite: {
             '^/api': ''

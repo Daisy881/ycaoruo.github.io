@@ -39,4 +39,30 @@
 	&:hover {
 		cursor: pointer;
 	}
+<<<<<<< HEAD
+=======
+}
+.address-font {
+	margin-bottom: 20px;
+	border: 3px solid #66B0FF;
+	border-radius: 5px;
+	padding: 5px;
+	cursor: pointer;
+}
+.edit-box {
+  height: 35px;
+  line-height: 35px;
+	border-left: 1px solid #D0D0D0;
+	position: relative;
+	top: -37px;
+	float: right;
+	padding-left: 5px;
+	cursor: pointer;
+}
+.address-class {
+	width: 447px;
+	padding: 5px;
+	margin-bottom: 10px;
+	border: 1px solid #D0D0D0;
+>>>>>>> 提交后续代码，完善信息
 }

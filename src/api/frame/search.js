@@ -25,7 +25,12 @@ export function searchMhu(name) {
 		method: 'post',
 		url: '/api/search/searchMhu',
 		data: {
+<<<<<<< HEAD
 			'name': '%' + name + '%'
+=======
+			'goodsName': '%' + name + '%',
+			'shopsName': '%' + name + '%'
+>>>>>>> 提交后续代码，完善信息
 		}
 	})
 }

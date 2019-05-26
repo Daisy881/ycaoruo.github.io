@@ -126,8 +126,12 @@
 		<el-dialog title="协议" :visible.sync="dialogVisible" width="40%" :close-on-click-modal="false">
 			<el-input v-model="protocol" type="textarea" resize="none" :rows="15" :readonly="true"></el-input>
 		  <span slot="footer" class="dialog-footer">
+<<<<<<< HEAD
 		    <el-button class="disagree" @click="dialogVisible = false">不同意</el-button>
 		    <el-button type="primary" @click="dialogVisible = false">同意</el-button>
+=======
+		    <el-button type="primary" @click="dialogVisible = false">确定</el-button>
+>>>>>>> 提交后续代码，完善信息
 		  </span>
 		</el-dialog>
     <!--忘记密码-->
@@ -231,7 +235,11 @@
 				vNumber: '',
 				timeBack: '',
 				timer: null,
+<<<<<<< HEAD
 				protocol: '这是一段协议w哒哒哒哒哒哒多多多多多多多多wwwwwwwwsssssssss突突突突突突拖拖拖拖拖拖拖拖拖拖拖sssssssssssssssssssssssssssssssssssssss',
+=======
+				protocol: '这是一段很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长的协议，协议内容如下所示：很多很多很多很多很多很多很多很多很多很多很多很多很多很多很多很多很多很多很多很多很多很多很多很多很多很多很多内容。',
+>>>>>>> 提交后续代码，完善信息
 				formData1: {
 					username: '',
 					password: '',
@@ -480,7 +488,11 @@
 				})
       },
       loginButton() {
+<<<<<<< HEAD
       	if (this.activeNum === 'first' && this.loginTip === '') {
+=======
+      	if (this.activeNum === 'first') {
+>>>>>>> 提交后续代码，完善信息
       		this.$refs.ruleForm.validate(valid => {
 						if (valid) {
 							const userInfo = {
@@ -511,6 +523,7 @@
 	      	} else if (!(/^1(3|4|5|7|8)\d{9}$/).test(this.formData2.phoneNumber)) {
 	      		this.loginTip2 = '请输入正确的手机号'
 	      	} else {
+<<<<<<< HEAD
 						this.loginTip2 = ''
 						this.$refs.ruleForm2.validate(valid => {
 							if (valid) {
@@ -526,6 +539,34 @@
 								}
 							}
 						})
+=======
+	      		loginByNumber(this.formData2.phoneNumber)
+	      		.then(response => {
+		      			if (response.data.status === 200) {
+		      				this.loginTip2 = ''
+									this.$refs.ruleForm2.validate(valid => {
+										if (valid) {
+											if (parseInt(this.formData2.dynamicCode) === this.code) { // 验证码正确
+												this.codeTip = ''
+												sessionStorage.setItem('myToken', response.data.token)
+												this.$store.dispatch('Login', response.data)
+												this.$router.push({
+													name: 'layout'
+												})
+											} else {
+												this.codeTip = '验证码不正确'
+											}
+										}
+									})
+		      			} else {
+		      				this.$message({
+		      					'message': '不存在此账户，请重新输入',
+		      					'type': 'warning'
+		      				})
+		      			}
+	      		})
+						
+>>>>>>> 提交后续代码，完善信息
 	    		}
       	}
       },

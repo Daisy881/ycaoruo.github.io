@@ -4,6 +4,7 @@
       <img src="../../icons/img/图标.png" style="width: 210px; height: 100px;">
     </div>
 		<el-container style="height: 600px; margin-bottom: 198px;">
+<<<<<<< HEAD
 			<el-header style="padding: 0px;">
 				<div class="searchBox">
 					<div class="search">
@@ -14,6 +15,10 @@
 			</el-header>
 			<el-container>
 				<el-main style="margin: 70px 220px auto 420px;">
+=======
+			<el-container>
+				<el-main style="margin: 130px 220px auto 420px;">
+>>>>>>> 提交后续代码，完善信息
 					<edit :id='id' :listData='listData'></edit>
 				</el-main>
 				<div @click="goHome" class="goHome"><<<返回首页</div>

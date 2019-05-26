@@ -2,7 +2,11 @@ import axios from 'axios'
 import store from '@/store' // 状态管理
 
 // 配置默认的host
+<<<<<<< HEAD
 const baseURL = 'http://192.168.101.25:3000/'
+=======
+const baseURL = 'http://192.168.3.1:3000/'
+>>>>>>> 提交后续代码，完善信息
 axios.defaults.baseURL = baseURL
 
 // 添加请求拦截器

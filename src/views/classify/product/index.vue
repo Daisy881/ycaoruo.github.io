@@ -4,7 +4,11 @@
 		<div class="rightFont">
 			<div style="font-size: 20px; font-weight: bolder;">{{goodsObj.goodsName}}</div>
 			<el-button @click="addCar(goodsObj)">加入购物车</el-button>
+<<<<<<< HEAD
 			<span class="month-praise">月售：{{goodsObj.sales_volume}}</span>
+=======
+			<span class="month-praise">月售：{{goodsObj.sale_volume}}</span>
+>>>>>>> 提交后续代码，完善信息
 			<div style="font-size: 18px; margin-top: -25px;">价格：<span style="color: red;">￥{{goodsObj.price}}</span></div>
 			<div style="font-size: 18px;">商品描述：{{goodsObj.goods_description}}</div>
 		</div>

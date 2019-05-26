@@ -7,12 +7,26 @@
 				<el-row :gutter="0" v-for="(item, index) in listQuery" :value="item.value" :key="index">
 					<el-col :span="20">
 						<el-row :gutter="0">
+<<<<<<< HEAD
 							<el-col :span="2">{{item.picAddress}}</el-col>
 							<el-col :span="12">{{item.goodsName}}, {{item.count}}</el-col>
 							<el-col :span="5">总价：￥{{(item.allPrice * item.count) | priceFormat}}</el-col>
 							<el-col :span="3">
 								<span :class="{'stateClass': stateFlag}" @click="goTo(item)">{{item.state}}</span>
 							</el-col>
+=======
+							<el-col :span="2">
+								<img :src="item.picAddress" style="width: 80px; height: 80px;" />
+							</el-col>
+							<el-row :gutter="0" style="margin-top: 35px;">
+								<el-col :span="8"><span style="font-size: 20px;">{{item.goodsName}}</span></el-col>
+								<el-col :span="5">数量：{{item.count}}</el-col>
+								<el-col :span="5">总价：￥{{(item.allPrice * item.count) | priceFormat}}</el-col>
+								<el-col :span="4">
+									<span :class="{'stateClass': stateFlag}" @click="goTo(item)">{{item.state}}</span>
+								</el-col>
+							</el-row>
+>>>>>>> 提交后续代码，完善信息
 						</el-row>
 					</el-col>
 				</el-row>
@@ -20,12 +34,29 @@
 		</div>
 		<el-dialog title="评价" :visible.sync="dialogVisible" width="30%" center>
 			<el-row :gutter="0">
+<<<<<<< HEAD
 				<el-col :span="8">{{this.evaluateList.picAddress}}</el-col>
 				<el-col :span="11">{{this.evaluateList.goodsName}}</el-col>
 				<el-col :span="5">￥{{this.evaluateList.allPrice}}</el-col>
 				<el-col :span="24" style="margin-top: 10px;">
 					<el-input v-model="input" placeholder="评价内容"></el-input>
 				</el-col>
+=======
+				<el-col :span="8">
+					<img :src="evaluateList.picAddress" style="width: 50px; height: 50px;" />
+				</el-col>
+				<el-row :gutter="0" style="margin-top: 25px;">
+					<el-col :span="11"><span style="font-size: 20px;">{{evaluateList.goodsName}}</span></el-col>
+					<el-col :span="5">￥{{evaluateList.allPrice}}</el-col>
+					<el-col :span="24">
+						<div style="width: 50px; position: relative; top: 20px;">评分</div>
+						<el-rate v-model="rateData" show-score text-color="#ff9900" score-template="{value}" style="margin-left: 20px;"> </el-rate>
+					<el-col :span="24" style="margin-top: 10px;">
+						<el-input v-model="input" placeholder="评价内容"></el-input>
+					</el-col>
+					</el-col>
+				</el-row>
+>>>>>>> 提交后续代码，完善信息
 				<div v-if="inputFlag" style="color: red; font-size: 10px;">请输入评价内容</div>
 			</el-row>
 			<span slot="footer">
@@ -49,6 +80,10 @@
 				type: '',
 				titleName: '全部订单',
 				noOrder: false,
+<<<<<<< HEAD
+=======
+				rateData: 0,
+>>>>>>> 提交后续代码，完善信息
 				inputFlag: false,
 				listQuery: [],
 				modArr: [],
@@ -63,9 +98,13 @@
 		props: ['id','listData'],
 		mounted() {
 			this.type = this.$route.query.type
+<<<<<<< HEAD
 			if (!this.type) {
 				this.addPay()
 			}
+=======
+			this.addPay()
+>>>>>>> 提交后续代码，完善信息
 			this.getList()
 			this.getUserId()
 		},
@@ -98,7 +137,11 @@
 						}
 				 }).catch(()=> { })
 			},
+<<<<<<< HEAD
 			// 增加待付款订单
+=======
+			// 增加已接单订单
+>>>>>>> 提交后续代码，完善信息
 			addPay(){
 				for (const i in this.listData) {
 				  const orderInfo = {
@@ -108,7 +151,11 @@
 				  	goodsName: this.listData[i].shops_goodsName,
 				  	count: this.listData[i].shops_count,
 				  	allPrice: this.listData[i].shops_price,
+<<<<<<< HEAD
 				  	state: 2,
+=======
+				  	state: 1,
+>>>>>>> 提交后续代码，完善信息
 				  	shopsName: this.listData[i].shops_Name,
 				  	orderNumber: Cookies.get('number')
 				  }
@@ -240,6 +287,12 @@
 							  		type: 'success'
 							  	})
 							  	this.getList()
+<<<<<<< HEAD
+=======
+							  	this.input = ''
+							  	this.rateData = 0
+									this.stateFlag = false
+>>>>>>> 提交后续代码，完善信息
 						  	} else {
 						  		this.$message({
 						  			message: '评价失败，请稍后再试！',
