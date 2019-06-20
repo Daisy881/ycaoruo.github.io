@@ -9,8 +9,6 @@
 				<div style="font-size: 24px;">￥{{price}}</div>
 				<div class="merchant-order">订单号：{{this.number}}</div>
 			</div>
-<<<<<<< HEAD
-=======
       <div v-if="receAddressFlag" @click="handleAddress" class="address-font" style="color: red;">请填写收货地址</div>
       <div v-else @click="handleAddress" class="address-font">
         收货地址：<span>{{this.receAddress.cname}}&nbsp;&nbsp;{{this.receAddress.cPhone}}</span>
@@ -19,7 +17,6 @@
           {{this.receAddress.shippingAddress}}{{this.receAddress.detailAddress}}
         </div>
       </div>
->>>>>>> 提交后续代码，完善信息
 			<div class="payWay" @click="doBankCard">银行卡支付
 				<img src="@/icons/img/勾选.png" class="chooseImg" v-if="id === 1"/>
 				<img src="@/icons/img/未勾选.png" class="chooseImg" v-else/>
@@ -38,21 +35,13 @@
 			</div>
 			<div class="payButton" @click="doPay">支付</div>
 		</div> 
-<<<<<<< HEAD
-=======
-
-
     <!--订单失效-->
->>>>>>> 提交后续代码，完善信息
 		<el-dialog title="提示" :visible.sync="dialogVisible" :closeOnClickModal="false" :showClose="false" width="30%" center>
 			<span style="margin-left: 90px;">支付时间已失效，请重新下单支付！</span>
 			<span slot="footer" class="dialog-footer">
 		    <el-button type="primary" @click="confirm">确 定</el-button>
 		  </span>
 		</el-dialog>
-<<<<<<< HEAD
-=======
-
     <!--收货地址填写-->
     <el-dialog title="收货地址" :visible.sync="addressFlag" :closeOnClickModal="false" width="38%" center>
       <div class="address-class" v-for="(item, index) in allAddress" :value="item.value" :key="index">
@@ -118,14 +107,11 @@
         <el-button @click="cancle">取消</el-button>
       </span>
     </el-dialog>
->>>>>>> 提交后续代码，完善信息
 		<copyright></copyright>
 	</div>
 </template>
 
 <script>
-<<<<<<< HEAD
-=======
   import { pcaa } from "area-data"
   import { 
     getAddress, 
@@ -137,14 +123,11 @@
     getDictionary, 
     addDictionary 
   } from '@/api/frame/address'
->>>>>>> 提交后续代码，完善信息
 	import copyright from '@/views/copyright/index'
   import Cookies from 'js-cookie'
 	export default {
 		name: 'pay',
 		data() {
-<<<<<<< HEAD
-=======
       let validatePhone = (rule, value, callback) => {
         if (value === '' || value.trim() === '') {
           callback(new Error('请输入收货人手机号'))
@@ -156,16 +139,12 @@
           }
         }
       }
->>>>>>> 提交后续代码，完善信息
 			return {
 				id: 1,
         startTime: '',
         lockSeconds: 1200,
 				number: '',
         dialogVisible: false,
-<<<<<<< HEAD
-        listQuery: []
-=======
         editFlag: false,
         receAddressFlag: true,
         allArr: [],
@@ -211,17 +190,13 @@
             trigger: 'blur'
           }]
         }
->>>>>>> 提交后续代码，完善信息
 			}
 		},
 		components: {
 			copyright
 		},
 		mounted(){
-<<<<<<< HEAD
-=======
       this.getList()
->>>>>>> 提交后续代码，完善信息
       this.number = Cookies.get('number')
       this.getTime()
       this.listQuery = this.$route.params.shoppingCarList
@@ -232,8 +207,6 @@
       },
     },
 		methods: {
-<<<<<<< HEAD
-=======
       // 页面初始填写收货地址
       getList() {
         getAddress(sessionStorage.getItem('username'))
@@ -459,7 +432,6 @@
           return 0
         }
       },
->>>>>>> 提交后续代码，完善信息
       // 读取cookies
       getTime() {
         // cookies存在
@@ -541,11 +513,6 @@
 				this.id = 4
 			},
 			doPay() {
-<<<<<<< HEAD
-        // this.$router.push({
-        //   name: ''
-        // })
-=======
         if (this.receAddress !== '') {
           this.$message({
             message: '支付成功，商家已接单！',
@@ -558,7 +525,6 @@
             }
           })
         }
->>>>>>> 提交后续代码，完善信息
 			},
       // 订单超时
       confirm() {

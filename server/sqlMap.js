@@ -7,11 +7,7 @@ var sqlMap = {
 	  getByPhoneNumber: 'select * from user_ruo where phoneNumber = ?',
     add: 'insert into user_ruo (username, password, phoneNumber) values (?, ?, ?)',
     edit: `update user_ruo set username = ?, nickName = ?, birthday = ?, 
-<<<<<<< HEAD
-          detailAddress = ?, phoneNumber = ?, password = ? where id = ?`,
-=======
           phoneNumber = ?, password = ? where id = ?`,
->>>>>>> 提交后续代码，完善信息
     editPwd: 'update user_ruo set password =? where phoneNumber = ?',
     saveHeadPortrait: 'update user_ruo set headPortrait =? where id = ?'
   },
@@ -45,11 +41,7 @@ var sqlMap = {
     searchShops: 'select * from shops_info where shopsName like ?'
   },
   goods_shops: {
-<<<<<<< HEAD
-    mohu: `select goods_info.*, shops_info.* from goods_info 
-=======
     mohu: `select distinct goods_info.*, shops_info.* from goods_info 
->>>>>>> 提交后续代码，完善信息
           left join shops_info on goods_info.belongsShops = shops_info.shopsType 
           where goods_info.goodsName like ? or shops_info.shopsName like ?`
   },
@@ -57,8 +49,6 @@ var sqlMap = {
   payOrder: {
     getPayOrder: 'select * from payOrder where username = ?'
   },
-<<<<<<< HEAD
-=======
   address: {
     getAddress: 'select * from address_info where username = ?',
     getAddressById: 'select * from address_info where id = ?',
@@ -69,7 +59,6 @@ var sqlMap = {
     getDictionary: 'select * from dictionary where aKey = ?',
     addDictionary: 'insert into dictionary (aKey, aValue) values (?, ?)'
   },
->>>>>>> 提交后续代码，完善信息
   // 评价
   evaluate: {
     shopsEvaluate: `select userinfo.id, userinfo.username, eva.content from 

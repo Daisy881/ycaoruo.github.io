@@ -5,11 +5,7 @@
     </div>
 		<div class="border-main">
 			<div style="margin: -20px auto 30px 0;">个人设置</div>
-<<<<<<< HEAD
-			<el-form :model="formData" ref="ruleForm" :rules="rules" label-position="left" label-width="25%">
-=======
 			<el-form :model="formData" ref="ruleForm" label-position="left" label-width="25%">
->>>>>>> 提交后续代码，完善信息
 				<el-form-item prop="headPortrait" label="头像">
           <div class="headPortrait-box">
             <label for="my_file" style="display:block; overflow: hidden; width: 50px;">
@@ -25,15 +21,6 @@
 				<el-form-item prop="birthday" label="生日">
 					<el-date-picker v-model="formData.birthday" type="date" style="width: 100%; margin-left: -20px; padding-left: 20px;" :picker-options="pickerOptions"></el-date-picker>
 				</el-form-item>
-<<<<<<< HEAD
-				<!-- <el-form-item prop="shippingAddress" label="收货地址">
-					<el-cascader expand-trigger="hover" :options="shippingAddressOptions" v-model="formData.shippingAddress" @change="handleChange" style="width: 100%;"></el-cascader>
-				</el-form-item> -->
-        <el-form-item prop="detailAddress">
-          <el-input type="textarea" v-model="formData.detailAddress" resize="none" min="2" max="4" style="width: 100%; margin-top: -15px;" placeholder="请输入详细地址(街道)"></el-input>
-        </el-form-item>
-=======
->>>>>>> 提交后续代码，完善信息
 			</el-form>
       <div class="loginTip">{{this.loginTip}}</div>
       <div style="font-size: 14px;">
@@ -166,11 +153,6 @@
 					headPortrait: '',
 					nickName: '',
 					birthday: '',
-<<<<<<< HEAD
-					// shippingAddress: [],
-					detailAddress: '',
-=======
->>>>>>> 提交后续代码，完善信息
           safety: '',
           password: '',
           phoneNumber: ''
@@ -189,22 +171,6 @@
 						return time.getTime() > Date.now()
 					}
 				},
-<<<<<<< HEAD
-        // shippingAddressOptions: [],
-				shippingAddressOptions: [],
-				rules: {
-          detailAddress: [{
-            min: 5,
-            message: '长度不得少于6个字符',
-            trigger: 'blur'
-          }],
-          shippingAddress: [{
-            validator: validateAddress,
-            trigger: 'blur'
-          }]
-				},
-=======
->>>>>>> 提交后续代码，完善信息
         rules2: {
           dynamic: [{
             validator: validateCode,
@@ -262,10 +228,6 @@
       getList() {
         getList(sessionStorage.getItem('username'))
          .then(response => {
-<<<<<<< HEAD
-          // for(const i in response.data) {
-=======
->>>>>>> 提交后续代码，完善信息
             this.formData = response.data[0]
             if (this.formData.headPortrait) {
               this.dialogImageUrl = this.formData.headPortrait
@@ -273,10 +235,6 @@
               this.dialogImageUrl = ''
             }
             this.isSafety()
-<<<<<<< HEAD
-          // }
-=======
->>>>>>> 提交后续代码，完善信息
         }).catch(() => { })
       },
       // 判断nickName是否唯一
@@ -340,11 +298,6 @@
                 username: this.formData.nickName,
                 nickName: this.formData.nickName,
                 birthday: this.formData.birthday,
-<<<<<<< HEAD
-                // shippingAddress: this.formData.shippingAddress,
-                detailAddress: this.formData.detailAddress,
-=======
->>>>>>> 提交后续代码，完善信息
                 phoneNumber: this.formData.phoneNumber,
                 password: this.formData.password,
                 userId: this.userId

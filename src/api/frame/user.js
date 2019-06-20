@@ -18,11 +18,6 @@ export function editList(params) {
       'username': params.username,
       'nickName': params.nickName,
       'birthday': params.birthday,
-<<<<<<< HEAD
-      // 'shippingAddress': params.shippingAddress,
-      'detailAddress': params.detailAddress,
-=======
->>>>>>> 提交后续代码，完善信息
       'phoneNumber': params.phoneNumber,
       'password': params.password,
       'id': params.userId

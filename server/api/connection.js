@@ -5,7 +5,6 @@ var mysql = require('mysql')
 var conn = mysql.createConnection(models.mysql)
  
 conn.connect()
-<<<<<<< HEAD
 var jsonWrite = function(res, ret) {
     if(typeof ret === 'undefined') {
         res.json({
@@ -17,8 +16,4 @@ var jsonWrite = function(res, ret) {
     }
 }
 
-module.exports = { jsonWrite, conn }
-=======
-
 module.exports = { conn }
->>>>>>> 提交后续代码，完善信息

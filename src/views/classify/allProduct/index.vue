@@ -2,16 +2,6 @@
 	<div class="allProduct">
 		<home-top @doSearch="searchList" @setCount="getCount"></home-top>
 		<div @click="goHome" class="goHome"><<<返回首页</div>
-<<<<<<< HEAD
-		<div class="allPhoto" style="margin-top: 60px;">
-			<ul v-for="(item, index) in this.listQuery" :value="item.value" :key="index">
-				<li>
-					<img :src="item.picAddress" style="width: 300px; height: 350px;" @click="doProduct(item)"/>
-					<div class="saleType">{{item.saleType}}折</div>
-					<div class="productName">{{item.goodsName}}
-						<span class="price">￥{{item.price}}</span>
-						<span class="doorPrice">￥{{item.originalPrice}}</span>
-=======
 		<div class="allPhoto">
 			<ul v-for="(item, index) in this.listQuery" :value="item.value" :key="index">
 				<li>
@@ -21,18 +11,13 @@
 					<div class="productName">{{item.goodsName}}
 						<span class="price">￥{{item.price}}</span>
 						<span class="doorPrice" v-if="item.saleType !== 0">￥{{item.originalPrice}}</span>
->>>>>>> 提交后续代码，完善信息
 					</div>
 					<img src="@/icons/img/goods/shoppingCar.png" title="加入购物车" class="imgClass" @click="intoCar(item)"/>
 				</li>
 			</ul>
 		</div>
 		<el-dialog title="goods" :visible.sync="dialogVisible" :close-on-click-modal="false" width="60%">
-<<<<<<< HEAD
-			<product @closeHandler="closeDialog" :goodsObj="goodsObj"></product>
-=======
 			<product @closeHandler="closeDialog" @setGoods="intoCar" :goodsObj="goodsObj"></product>
->>>>>>> 提交后续代码，完善信息
 		</el-dialog>
 		<copyright></copyright>
 	</div>
@@ -76,17 +61,8 @@
 			getList() {
 				getGoodsList()
 				 .then(response => {
-<<<<<<< HEAD
-				 		this.listQuery = response.data
-				 })
-				 // getImg() 
-				 //  .then(response => {
-				 //  	console.log(response,99)
-				 //  })
-=======
 						this.listQuery = response.data
 				 })
->>>>>>> 提交后续代码，完善信息
 			},
 			getCount(params) {
 				this.count = params
@@ -105,44 +81,6 @@
 			},
 			// 加入购物车
 			intoCar(params) { // 获取购物车中的商品
-<<<<<<< HEAD
-				getList(sessionStorage.getItem('username'))
-				 .then(response => {
-						this.arr = response.data
-						if (this.arr.length === 0) {
-							this.addAllGoods(params)
-						} else {
-							// 判断购物车中的商品和点击的商品是否一样 一样则数量加一 不一样则直接加入
-							for (const i in this.arr) { // 购物车中的商品
-								this.count = this.arr[i].shops_count
-								if(this.arr[i].shops_goodsName === params.goodsName &&
-									this.arr[i].shops_Name === params.shopsName &&
-									this.arr[i].shops_price === params.price) { // 商品名字 商家名字 价格  一样
-									const paramsInfo = {
-										count: this.count + 1,
-										id: this.arr[i].id
-									}
-									editGoodsCount(paramsInfo)
-									 .then(response => {
-									 		this.$message({
-									 			message: '加入购物车成功',
-									 			type: 'success'
-									 		})
-									 		this.count = paramsInfo.count
-									 })
-									 .catch(() => { })
-								 		return false
-								} else { // 不一样
-									if (this.arr[i] === this.arr[this.arr.length-1]) {
-										this.addAllGoods(params)
-									}
-								}
-							}
-						}
-				 }).catch(() => {
-				 		return false
-				 })
-=======
 				if (sessionStorage.getItem('username')) {
 					getList(sessionStorage.getItem('username'))
 					 .then(response => {
@@ -186,7 +124,6 @@
 						type: 'warning'
 					})
 				}
->>>>>>> 提交后续代码，完善信息
 			},
 			addAllGoods(params) {
 				const goodsInfo = {
@@ -200,45 +137,20 @@
 				}
 				addGoods(goodsInfo)
 				 .then(response => {
-<<<<<<< HEAD
-				 		this.$message({
-				 			message: '加入购物车成功',
-				 			type: 'success'
-				 		})
-=======
 						this.$message({
 							message: '加入购物车成功',
 							type: 'success'
 						})
->>>>>>> 提交后续代码，完善信息
 				 })
 				 .catch(() => { })
 			},
 			searchList(params) {
-<<<<<<< HEAD
-=======
 				console.log(params)
->>>>>>> 提交后续代码，完善信息
 				this.listQuery = params
 			},
 			allsSearch(params) {
 				searchMhu(params)
 				 .then(response => {
-<<<<<<< HEAD
-					 	if (response.data.status === 401) {
-					 		this.$message({
-					 			message: '未找到与搜索内容相关的商品或商家，请重新查询！',
-					 			type: 'warning'
-					 		})
-					 	} else if (response.data.status === 400) {
-					 		this.$message({
-					 			message: '查询失败！',
-					 			type: 'warning'
-					 		})
-					 	} else {
-					 		this.searchList(response.data)
-					 	}
-=======
 						if (response.data.status === 401) {
 							this.$message({
 								message: '未找到与搜索内容相关的商品或商家，请重新查询！',
@@ -252,7 +164,6 @@
 						} else {
 							this.searchList(response.data)
 						}
->>>>>>> 提交后续代码，完善信息
 				 }) .catch(() => { })
 			}
 		}
@@ -263,29 +174,17 @@
 		float: left;
 		list-style: none;
 		padding-bottom: 10px;
-<<<<<<< HEAD
-		margin: 0 0 50px 40px;
-		border: 1px solid #c0c4cc;
-	}
-	.allPhoto {
-		height: 2000px;
-=======
 		margin: 0 0 50px 15px;
 		border: 1px solid #c0c4cc;
 	}
 	.allPhoto {
 		height: 4000px;
 		margin-top: 60px;
->>>>>>> 提交后续代码，完善信息
 	}
 	.goHome {
 		left: 40px;
 	}
 	.saleType {
-<<<<<<< HEAD
-		top: -355px;
-=======
 		top: -305px;
->>>>>>> 提交后续代码，完善信息
 	}
 </style>

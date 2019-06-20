@@ -12,20 +12,12 @@
 				<div style="font-size: 18px;">营业时间：{{listObj.openingHours | dateFormat}}</div>
 				<div style="font-size: 14px; margin-top: 10px;">{{listObj.WIFI}}</div>
 			</div>
-<<<<<<< HEAD
-			<img :src="listObj.picAddress" style="width: 260px; height: 240px;">
-=======
 			<img :src="listObj.shops_picAddress" style="width: 260px; height: 240px;">
->>>>>>> 提交后续代码，完善信息
 			<div class="sales">
 				<span style="font-size: 18px;">优惠促销</span>
 				<ul v-for="(item, index) in saleList" :value="item.value" :key="index" style="margin-top: 20px">
 					<li>
-<<<<<<< HEAD
-						<img :src="item.url" style="width: 200px; height: 200px;"/>
-=======
 						<img :src="item.picAddress" style="width: 200px; height: 200px;"/>
->>>>>>> 提交后续代码，完善信息
 						<div class="saleType">{{item.saleType}}折</div>
 						<div class="productName productNames">{{item.goodsName}}
 							<span class="price prices">￥{{item.price}}</span>
@@ -101,45 +93,6 @@
 			},
 			// 加入购物车
 			intoCar(params) { 
-<<<<<<< HEAD
-				// 获取购物车中的商品
-				getList(sessionStorage.getItem('username'))
-				 .then(response => {
-						this.arr = response.data
-						if (this.arr.length === 0) {
-							this.addAllGoods(params)
-						} else {
-							// 判断购物车中的商品和点击的商品是否一样 一样则数量加一 不一样则直接加入
-							for (const i in this.arr) { // 购物车中的商品
-								this.count = this.arr[i].shops_count
-								if(this.arr[i].shops_goodsName === params.goodsName &&
-									this.arr[i].shops_Name === params.shopsName &&
-									this.arr[i].shops_price === params.price) { // 商品名字 商家名字 价格  一样
-									const paramsInfo = {
-										count: this.count + 1,
-										id: this.arr[i].id
-									}
-									editGoodsCount(paramsInfo)
-									 .then(response => {
-									 		this.$message({
-									 			message: '加入购物车成功',
-									 			type: 'success'
-									 		})
-									 		this.count = paramsInfo.count
-									 })
-									 .catch(() => { })
-								 		return false
-								} else { // 不一样
-									if (this.arr[i] === this.arr[this.arr.length-1]) {
-										this.addAllGoods(params)
-									}
-								}
-							}
-						}
-				 }).catch(() => {
-				 		return false
-				 })
-=======
 				if (sessionStorage.getItem('username')) {
 					// 获取购物车中的商品
 					getList(sessionStorage.getItem('username'))
@@ -184,7 +137,6 @@
 						type: 'warning'
 					})
 				}
->>>>>>> 提交后续代码，完善信息
 			},
 			addAllGoods(params) {
 				const goodsInfo = {
